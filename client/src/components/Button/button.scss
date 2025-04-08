@@ -1,0 +1,46 @@
+@use "../../assets/scss/abstracts/variables";
+@use "../../assets/scss/base/typography";
+@use "sass:color";
+
+.button {
+  border-radius: 8px;
+  padding: 12px 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+  font-family: typography.$font-urbanist;
+
+  &.button-primary {
+    background-color: variables.$red-dark;
+    color: variables.$neutral-white;
+
+    &:hover {
+      background-color: color.adjust(variables.$red-dark, $lightness: -5%);
+    }
+
+    &:focus {
+      background-color: color.adjust(variables.$red-dark, $lightness: -10%);
+    }
+  }
+
+  &.button-secondary {
+    background-color: #ffffff;
+    color: variables.$red-dark;
+    border: 1px solid variables.$red-dark;
+
+    &:hover {
+      background-color: color.adjust(#ffffff, $lightness: -5%);
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(178, 34, 34, 0.4);
+    }
+  }
+}

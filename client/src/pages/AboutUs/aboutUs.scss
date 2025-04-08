@@ -1,0 +1,35 @@
+.about-us-container {
+  .about-us-content {
+    padding-left: 96px;
+    padding-right: 96px;
+    display: flex;
+    gap: 280px;
+  }
+
+  .about-us-left {
+    margin-top: 142px;
+
+    .about-us-left-text {
+      text-align: left;
+      white-space: nowrap;
+    }
+  }
+
+  .about-us-description {
+    .intro-text {
+      text-align: left;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 24px;
+      color: #1d2939;
+      text-align: justify;
+    }
+  }
+
+  .theater-image {
+    margin-top: 48px;
+    width: 100%;
+    max-height: 500px;
+    display: block;
+  }
+}
