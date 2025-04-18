@@ -1,18 +1,31 @@
+@use "../../assets/scss/abstracts/variables";
+@use "../../assets/scss/abstracts/font-weights";
+
 .header {
   background-color: #1d2939;
   display: flex;
   height: 80px;
   width: 100%;
-  border-bottom: 1px #667085 solid;
+  max-width: 100%;
+  border-bottom: 1px variables.$neutral-500 solid;
 
   .header-frame {
     display: flex;
-
     height: 48px;
     width: 1256px;
     margin-top: 16px;
     margin-left: 92px;
     gap: 317px;
+
+    .logo-link {
+      display: flex;
+      align-items: center;
+
+      .header-logo {
+        display: block;
+        height: 100%;
+      }
+    }
 
     .header-list {
       display: flex;
@@ -21,7 +34,7 @@
       list-style: none;
       column-gap: 24px;
       font-size: 16px;
-      font-weight: 400;
+      font-weight: font-weights.$regular;
       color: #ffffff;
       text-decoration: none;
     }

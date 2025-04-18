@@ -7,9 +7,9 @@ export const AboutUs = () => {
     <div className="about-us-container">
       <div className="about-us-content">
         <aside className="about-us-left">
-          <h2 className="about-us-left-text">About Our Dream.</h2>
-          <h2 className="about-us-left-text">Our History.</h2>
-          <h2 className="about-us-left-text">Cinema.</h2>
+          <h5 className="about-us-left-text">About Our Dream.</h5>
+          <h5 className="about-us-left-text">Our History.</h5>
+          <h5 className="about-us-left-text">Cinema.</h5>
         </aside>
 
         <main className="about-us-main">

@@ -1,6 +1,7 @@
 @use "../../assets/scss/abstracts/variables";
 @use "../../assets/scss/base/typography";
 @use "sass:color";
+@use "../../assets/scss/abstracts/font-weights";
 
 .button {
   border-radius: 8px;
@@ -9,7 +10,7 @@
   align-items: center;
   justify-content: center;
   gap: 4px;
-  font-weight: 600;
+  font-weight: font-weights.$semibold;
   cursor: pointer;
   border: none;
   text-decoration: none;
@@ -41,6 +42,30 @@
     &:focus {
       outline: none;
       box-shadow: 0 0 0 2px rgba(178, 34, 34, 0.4);
+    }
+  }
+
+  &.button-tertiary {
+    width: 48px;
+    height: 48px;
+    border: 1px solid variables.$neutral-200;
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    background-color: #ffffff;
+
+    &:hover:not(.disabled) {
+      background-color: variables.$neutral-200;
+    }
+
+    &.disabled {
+      color: variables.$neutral-200;
+      opacity: 0.5;
+      cursor: not-allowed;
     }
   }
 }

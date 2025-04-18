@@ -1,17 +1,21 @@
+@use "../../assets/scss/abstracts/font-weights";
+
 .about-us-container {
   .about-us-content {
     padding-left: 96px;
     padding-right: 96px;
     display: flex;
-    gap: 280px;
+    gap: 230px;
   }
 
   .about-us-left {
-    margin-top: 142px;
+    margin-top: 165px;
 
     .about-us-left-text {
       text-align: left;
       white-space: nowrap;
+      margin-top: 0;
+      margin-bottom: 0;
     }
   }
 
@@ -19,7 +23,7 @@
     .intro-text {
       text-align: left;
       font-size: 16px;
-      font-weight: 400;
+      font-weight: font-weights.$regular;
       line-height: 24px;
       color: #1d2939;
       text-align: justify;
