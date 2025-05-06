@@ -5,10 +5,12 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,6 +18,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -52,16 +55,23 @@ public class Movie {
     private PgRating pgRating;
 
     @Column
+    private String language;
+
+    @Column
     @CreationTimestamp
-    private LocalDate createdAt;
+    private Instant createdAt;
 
     @Column
     @UpdateTimestamp
-    private LocalDate updatedAt;
+    private Instant updatedAt;
 
     @OneToMany(mappedBy = "movie", orphanRemoval = true)
     private List<MovieGenre> movieGenres;
 
     @OneToMany(mappedBy = "movie", orphanRemoval = true)
     private List<MoviePhoto> photos;
+
+    @OneToMany(mappedBy = "movie", orphanRemoval = true)
+    @OrderBy("startTime ASC")
+    private List<Screening> screenings;
 }

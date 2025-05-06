@@ -3,23 +3,37 @@ import * as React from "react";
 import { getUpcomingMovies } from "../api";
 import type { Movie } from "../api";
 import type { Pageable } from "../utils";
+import { clearEmptyMovieFilters } from "../utils";
 
-type UpcomingResponse = {
+export type UpcomingResponse = {
   content: Movie[];
   totalElements: number;
 };
 
-export type UseUpcomingProps = Pageable;
+export type UseUpcomingProps = Pageable & {
+  title?: string;
+  genres?: string[];
+  city?: string;
+  cinema?: string;
+};
 
 export const useUpcomingMovies = ({
   page = 0,
   size = 4,
+  title,
+  genres,
+  city,
+  cinema,
 }: UseUpcomingProps = {}) => {
   const [data, setData] = React.useState<UpcomingResponse | null>(null);
 
   React.useEffect(() => {
     function fetchUpcomingMovies() {
-      const pageable: Pageable = { page, size };
+      const pageable = clearEmptyMovieFilters(
+        { page, size },
+        { title, genres, city, cinema }
+      );
+
       getUpcomingMovies(pageable)
         .then((response) => {
           const formattedResponse = {
@@ -36,7 +50,7 @@ export const useUpcomingMovies = ({
     }
 
     fetchUpcomingMovies();
-  }, [page, size]);
+  }, [page, size, title, genres, city, cinema]);
 
   return { data };
 };

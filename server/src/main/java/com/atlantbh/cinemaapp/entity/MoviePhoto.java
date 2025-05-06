@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -38,11 +39,11 @@ public class MoviePhoto {
 
     @Column
     @CreationTimestamp
-    private LocalDate createdAt;
+    private Instant createdAt;
 
     @Column
     @UpdateTimestamp
-    private LocalDate updatedAt;
+    private Instant updatedAt;
 
     @ManyToOne
     @JoinColumn(name = "movie_id", nullable = false)

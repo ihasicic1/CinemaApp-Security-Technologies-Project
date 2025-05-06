@@ -1,5 +1,5 @@
 import { axiosApp } from "./axiosApp";
-import type { Movie } from "./types";
+import type { Movie, MovieFiltersWithPageable } from "./types";
 import type { Pageable, ResponseType } from "../utils";
 
 export const getLatestMovies = async (): Promise<ResponseType<Movie>> => {
@@ -9,10 +9,10 @@ export const getLatestMovies = async (): Promise<ResponseType<Movie>> => {
 };
 
 export const getCurrentlyShowingMovies = async (
-  pageable: Pageable
+  query: MovieFiltersWithPageable
 ): Promise<ResponseType<Movie>> => {
   const response = await axiosApp.get("/movies/currently-showing", {
-    params: { ...pageable },
+    params: { ...query },
   });
 
   return response.data;

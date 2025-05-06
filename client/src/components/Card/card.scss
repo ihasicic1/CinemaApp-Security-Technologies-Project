@@ -37,4 +37,39 @@
     color: variables.$neutral-500;
     letter-spacing: 0.175px;
   }
+
+  &.horizontal {
+    flex-direction: row;
+    align-items: flex-start;
+    width: 100%;
+    height: 319px;
+
+    .card-content {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      height: 100%;
+      padding: 16px;
+      max-width: 405px;
+    }
+
+    .card-title {
+      margin: 0;
+      font-size: 32px;
+      font-weight: font-weights.$bold;
+      margin-top: -16px;
+      padding-bottom: 20px;
+    }
+
+    .card-description {
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .card-extra {
+      margin-top: -40px;
+    }
+  }
 }

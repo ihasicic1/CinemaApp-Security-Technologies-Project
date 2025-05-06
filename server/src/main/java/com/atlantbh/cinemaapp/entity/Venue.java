@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,7 +16,9 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -41,14 +44,17 @@ public class Venue {
 
     @Column
     @CreationTimestamp
-    private LocalDate createdAt;
+    private Instant createdAt;
 
     @Column
     @UpdateTimestamp
-    private LocalDate updatedAt;
+    private Instant updatedAt;
 
     @ManyToOne
     @JoinColumn(name = "location_id")
-    @JsonIgnore
     private Location location;
+
+    @OneToMany(mappedBy = "venue")
+    @JsonIgnore
+    private List<Hall> halls;
 }

@@ -97,7 +97,8 @@ VALUES
     ('Drama'),
     ('History'),
     ('Mystery'),
-    ('Romance');
+    ('Romance'),
+    ('Family');
 
 INSERT INTO movies (title, synopsis, duration, start_date, end_date, pg_rating)
 VALUES

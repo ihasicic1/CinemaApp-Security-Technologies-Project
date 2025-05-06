@@ -45,6 +45,7 @@ export const Home = () => {
           currentPage={currentlyShowingMoviesPage}
           totalElements={currentlyShowing?.totalElements ?? 0}
           onPageChange={setCurrentlyShowingMoviesPage}
+          link="/currently-showing"
         >
           {currentlyShowing?.content?.map((movie) => {
             const coverPhoto =
@@ -76,6 +77,7 @@ export const Home = () => {
           currentPage={upcomingMoviesPage}
           totalElements={upcoming?.totalElements ?? 0}
           onPageChange={setUpcomingMoviesPage}
+          link="/upcoming"
         >
           {upcoming?.content?.map((movie) => {
             const coverPhoto =

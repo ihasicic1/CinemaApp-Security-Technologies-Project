@@ -1,5 +1,6 @@
 package com.atlantbh.cinemaapp.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,6 +14,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -37,12 +39,13 @@ public class Location {
 
     @Column
     @CreationTimestamp
-    private LocalDate createdAt;
+    private Instant createdAt;
 
     @Column
     @UpdateTimestamp
-    private LocalDate updatedAt;
+    private Instant updatedAt;
 
     @OneToMany(mappedBy = "location")
+    @JsonIgnore
     private List<Venue> venues;
 }

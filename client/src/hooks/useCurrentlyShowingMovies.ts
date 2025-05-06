@@ -1,25 +1,33 @@
 import * as React from "react";
 
 import { getCurrentlyShowingMovies } from "../api/movies";
-import type { Movie } from "../api/types";
-import type { Pageable } from "../utils";
+import type { Movie, MovieFiltersWithPageable } from "../api/types";
+import { clearEmptyMovieFilters } from "../utils";
 
-type CurrentlyShowingResponse = {
+export type CurrentlyShowingResponse = {
   content: Movie[];
   totalElements: number;
 };
 
-export type UseCurrentlyShowingProps = Pageable;
-
 export const useCurrentlyShowingMovies = ({
   page = 0,
   size = 4,
-}: UseCurrentlyShowingProps = {}) => {
+  title,
+  genres,
+  city,
+  cinema,
+  projectionTime,
+  date,
+}: MovieFiltersWithPageable = {}) => {
   const [data, setData] = React.useState<CurrentlyShowingResponse | null>(null);
 
   React.useEffect(() => {
     function fetchCurrentlyShowingMovies() {
-      const pageable: Pageable = { page, size };
+      const pageable = clearEmptyMovieFilters(
+        { page, size },
+        { title, genres, city, cinema, projectionTime, date }
+      );
+
       getCurrentlyShowingMovies(pageable)
         .then((response) => {
           const formattedResponse = {
@@ -36,7 +44,7 @@ export const useCurrentlyShowingMovies = ({
     }
 
     fetchCurrentlyShowingMovies();
-  }, [page, size]);
+  }, [page, size, title, genres, city, cinema, projectionTime, date]);
 
   return { data };
 };

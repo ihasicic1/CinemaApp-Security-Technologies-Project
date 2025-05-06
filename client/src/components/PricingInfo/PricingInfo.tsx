@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import CheckIcon from "@mui/icons-material/Check";
 
 import { Button } from "../Button";
@@ -35,11 +36,13 @@ export const PricingInfo = ({
           </li>
         ))}
       </ul>
-      <Button
-        variant={buttonVariant}
-        label="Explore Movies"
-        className="explore-movies-button"
-      />
+      <Link to="/" onClick={() => window.scrollTo(0, 0)}>
+        <Button
+          variant={buttonVariant}
+          label="Explore Movies"
+          className="explore-movies-button"
+        />
+      </Link>
     </div>
   );
 };

@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/venues")
 public class VenueController {
@@ -18,6 +20,9 @@ public class VenueController {
     public VenueController(final VenueService venueService) {
         this.venueService = venueService;
     }
+
+    @GetMapping("/all")
+    public List<Venue> getAllVenues() { return venueService.getAllVenues(); }
 
     @GetMapping
     public ResponseEntity<Page<Venue>> getVenues(@ModelAttribute final Pagination pagination) {

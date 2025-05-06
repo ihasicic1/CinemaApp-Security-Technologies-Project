@@ -4,6 +4,8 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 .env
+src/main/resources/jwt/app.key
+src/main/resources/jwt/app.pub
 
 ### STS ###
 .apt_generated

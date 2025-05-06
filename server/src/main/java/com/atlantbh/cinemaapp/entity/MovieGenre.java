@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -41,9 +42,9 @@ public class MovieGenre {
 
     @Column
     @CreationTimestamp
-    private LocalDate createdAt;
+    private Instant createdAt;
 
     @Column
     @UpdateTimestamp
-    private LocalDate updatedAt;
+    private Instant updatedAt;
 }
