@@ -54,7 +54,28 @@ CinemaApp is a web-based ticketing platform designed for a movie company with mu
 
 2. Configure the database in `server/src/main/resources/application.properties`:
 
-3. Build and run the Spring Boot application:
+3. Set the required environment variables:
+
+   You can refer to the `.env.example` file in the backend project root directory for a complete list of required variables. Copy its contents into a new `.env` file and update the values accordingly:
+
+   DB_USER=your_database_username  
+   DB_PASSWORD=your_database_password  
+   DB_URL=your_database_url_and_name
+
+4. Generate RSA keys for JWT:
+
+   Open a terminal in the project's root directory and run:
+
+   openssl genpkey -algorithm RSA -out src/main/resources/jwt/app.key -outform PEM
+   openssl rsa -pubout -in src/main/resources/jwt/app.key -out src/main/resources/jwt/app.pub
+
+   This will generate:
+
+   A private key file: src/main/resources/jwt/app.key
+
+   A public key file: src/main/resources/jwt/app.pub
+
+5. Build and run the Spring Boot application:
 
    cd server
    mvn clean install
@@ -70,16 +91,21 @@ CinemaApp is a web-based ticketing platform designed for a movie company with mu
 
    cd client
 
-2. Install dependencies:
+2. Set the required environment variables:
+
+   You can refer to the `.env.example` file in the frontend project root directory for a complete list of required variables. Copy its contents into a new `.env` file and update the values accordingly:
+
+   VITE_API_BASE_URL=your_base_url
+
+3. Install dependencies:
 
    npm install
 
-3. Start the development server:
+4. Start the development server:
 
    npm run dev
 
    The frontend will start on http://localhost:5173
-
 
 ## Database Migrations
 
