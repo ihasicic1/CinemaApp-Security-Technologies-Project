@@ -5,6 +5,7 @@ import "./dateList.scss";
 export type DateListProps = {
   onDateSelect: (selectedDate: string) => void;
   selectedDate: string;
+  dateBoxClassName?: string;
 };
 
 const generateDateArray = () => {
@@ -16,7 +17,11 @@ const generateDateArray = () => {
   });
 };
 
-export const DateList = ({ selectedDate, onDateSelect }: DateListProps) => {
+export const DateList = ({
+  selectedDate,
+  onDateSelect,
+  dateBoxClassName,
+}: DateListProps) => {
   const dates = generateDateArray();
 
   return (
@@ -27,6 +32,7 @@ export const DateList = ({ selectedDate, onDateSelect }: DateListProps) => {
           date={date}
           isSelected={selectedDate === date}
           onSelect={() => onDateSelect(date)}
+          className={dateBoxClassName}
         />
       ))}
     </div>

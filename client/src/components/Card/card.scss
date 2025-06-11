@@ -67,9 +67,29 @@
       flex-direction: column;
       justify-content: space-between;
     }
-
     .card-extra {
       margin-top: -40px;
+    }
+  }
+
+  &.small {
+    width: 196px;
+    height: 200px;
+    border-radius: 16px;
+    padding: 16px 12px;
+
+    .card-img {
+      width: 172px;
+      height: 136px;
+      border-radius: 8px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .card-title {
+      font-size: 16px;
+      line-height: 24px;
+      letter-spacing: 0.08px;
     }
   }
 }

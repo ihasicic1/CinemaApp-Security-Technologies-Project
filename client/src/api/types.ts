@@ -16,12 +16,36 @@ export type Movie = {
   endDate: Date;
   language: string;
   pgRating: PGRating;
+  director: string;
   screenings: Screening[];
   movieGenres: {
     id: string;
     genre: Genre;
   }[];
   photos: Photo[];
+  trailerUrl: string;
+  movieWriters: {
+    id: string;
+    writer: Writer;
+  }[];
+  roles: {
+    id: string;
+    name: string;
+    actor: Actor;
+  }[];
+};
+
+export type Writer = {
+  id: string;
+  firstName: string;
+  lastName: string;
+};
+
+export type Actor = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  role: string;
 };
 
 export type Photo = {
@@ -71,3 +95,15 @@ export type MovieFilters = {
 };
 
 export type MovieFiltersWithPageable = MovieFilters & Pageable;
+
+export type User = {
+  id: string;
+  email: string;
+};
+
+export type AuthFormErrors = {
+  email?: string;
+  password?: string;
+  confirmPassword?: string;
+  general?: string;
+};

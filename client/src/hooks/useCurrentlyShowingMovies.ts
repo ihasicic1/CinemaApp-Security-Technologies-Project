@@ -20,9 +20,12 @@ export const useCurrentlyShowingMovies = ({
   date,
 }: MovieFiltersWithPageable = {}) => {
   const [data, setData] = React.useState<CurrentlyShowingResponse | null>(null);
+  const [isLoading, setIsLoading] = React.useState<boolean>(true);
 
   React.useEffect(() => {
     function fetchCurrentlyShowingMovies() {
+      setIsLoading(true);
+
       const pageable = clearEmptyMovieFilters(
         { page, size },
         { title, genres, city, cinema, projectionTime, date }
@@ -40,11 +43,14 @@ export const useCurrentlyShowingMovies = ({
         })
         .catch((error) => {
           console.error("Failed to fetch currently showing movies:", error);
+        })
+        .finally(() => {
+          setIsLoading(false);
         });
     }
 
     fetchCurrentlyShowingMovies();
   }, [page, size, title, genres, city, cinema, projectionTime, date]);
 
-  return { data };
+  return { data, isLoading };
 };

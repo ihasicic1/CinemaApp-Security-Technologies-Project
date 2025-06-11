@@ -1,14 +1,15 @@
 package com.atlantbh.cinemaapp.controller;
 
+import com.atlantbh.cinemaapp.dto.MovieRating;
 import com.atlantbh.cinemaapp.entity.Movie;
 import com.atlantbh.cinemaapp.service.MovieService;
 import com.atlantbh.cinemaapp.util.Pagination;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("api/movies")
@@ -25,6 +27,11 @@ public class MovieController {
 
     public MovieController(final MovieService movieService) {
         this.movieService = movieService;
+    }
+
+    @GetMapping("/{movieId}")
+    public ResponseEntity<Movie> getMovieById(@PathVariable final UUID movieId) {
+        return ResponseEntity.ok(movieService.getMovieById(movieId));
     }
 
     @GetMapping("/currently-showing")
@@ -61,5 +68,17 @@ public class MovieController {
     @GetMapping("/latest")
     public ResponseEntity<Page<Movie>> getLatest(@RequestParam(defaultValue = "3") final Integer size) {
         return ResponseEntity.ok(movieService.getLatestMovies(size));
+    }
+
+    @GetMapping("/{movieId}/similar")
+    public ResponseEntity<Page<Movie>> getSimilarMovies(@PathVariable final UUID movieId,
+                                                        @ModelAttribute final Pagination pagination) {
+
+        return ResponseEntity.ok(movieService.getSimilarMovies(movieId, pagination.toPageable()));
+    }
+
+    @GetMapping("/{movieId}/ratings")
+    public ResponseEntity<List<MovieRating>> getMovieRatings(@PathVariable final UUID movieId) {
+        return ResponseEntity.ok(movieService.getMovieRatings(movieId));
     }
 }

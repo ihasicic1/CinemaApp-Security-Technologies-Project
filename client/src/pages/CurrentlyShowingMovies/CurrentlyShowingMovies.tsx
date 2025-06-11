@@ -1,6 +1,11 @@
 import { useMemo, useState } from "react";
 
-import { MoviesFilter, MoviesList, MoviePagesEmpty } from "../../components";
+import {
+  MoviesFilter,
+  MoviesList,
+  MoviePagesEmpty,
+  Loading,
+} from "../../components";
 import { useCurrentlyShowingMovies } from "../../hooks";
 import type { UpcomingMoviesFilters } from "../UpcomingMovies";
 
@@ -25,7 +30,7 @@ export const CurrentlyShowingMovies = () => {
 
   const [pageSize, setPageSize] = useState<number>(PAGE_SIZE);
 
-  const { data } = useCurrentlyShowingMovies({
+  const { data, isLoading } = useCurrentlyShowingMovies({
     page: 0,
     size: pageSize,
     ...filters,
@@ -68,7 +73,7 @@ export const CurrentlyShowingMovies = () => {
   };
 
   const showLoadMore = movies.length > 0 && movies.length < totalMovies;
-  const showEmptyState = movies.length === 0;
+  const showEmptyState = !isLoading && movies.length === 0;
 
   return (
     <div className="currently-showing-movies">
@@ -88,7 +93,9 @@ export const CurrentlyShowingMovies = () => {
       </p>
 
       <div className="currently-showing-movies-list-container">
-        {showEmptyState ? (
+        {isLoading ? (
+          <Loading size="large" />
+        ) : showEmptyState ? (
           <MoviePagesEmpty type="currently-showing" />
         ) : (
           <>

@@ -8,21 +8,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Getter
-@AllArgsConstructor
-@NoArgsConstructor
 @Table(name = "locations")
 public class Location {
 
@@ -48,4 +41,44 @@ public class Location {
     @OneToMany(mappedBy = "location")
     @JsonIgnore
     private List<Venue> venues;
+
+    public Location() {}
+
+    public Location(final UUID id,
+                    final String city,
+                    final String country,
+                    final Instant createdAt,
+                    final Instant updatedAt,
+                    final List<Venue> venues) {
+        this.id = id;
+        this.city = city;
+        this.country = country;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.venues = venues;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public Instant getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public List<Venue> getVenues() {
+        return venues;
+    }
 }

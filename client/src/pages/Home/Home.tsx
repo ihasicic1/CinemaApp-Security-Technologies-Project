@@ -1,7 +1,8 @@
 import * as React from "react";
+import { Link } from "react-router-dom";
 
 import { Card } from "../../components";
-import { Hero, HomepageSection } from "../../components";
+import { Hero, HomepageGridSection } from "../../components";
 import {
   useCurrentlyShowingMovies,
   useUpcomingMovies,
@@ -15,10 +16,10 @@ const DEFAULT_SIZE = 4;
 
 export const Home = () => {
   const [currentlyShowingMoviesPage, setCurrentlyShowingMoviesPage] =
-    React.useState(DEFAULT_PAGE);
+    React.useState<number>(DEFAULT_PAGE);
   const [upcomingMoviesPage, setUpcomingMoviesPage] =
-    React.useState(DEFAULT_PAGE);
-  const [venuesPage, setVenuesPage] = React.useState(DEFAULT_PAGE);
+    React.useState<number>(DEFAULT_PAGE);
+  const [venuesPage, setVenuesPage] = React.useState<number>(DEFAULT_PAGE);
 
   const { data: currentlyShowing } = useCurrentlyShowingMovies({
     page: currentlyShowingMoviesPage,
@@ -39,7 +40,7 @@ export const Home = () => {
     <div className="homepage-container">
       <Hero />
       <div className="homepage-section-container">
-        <HomepageSection
+        <HomepageGridSection
           title="Currently Showing"
           itemsPerPage={DEFAULT_SIZE}
           currentPage={currentlyShowingMoviesPage}
@@ -53,25 +54,33 @@ export const Home = () => {
               movie.photos[0];
 
             return (
-              <Card
+              <Link
+                to={`/movies/${movie.id}`}
                 key={movie.id}
-                photoUrl={coverPhoto.url}
-                title={movie.title}
-                description={
-                  <div className="card-duration-genre">
-                    <p className="card-duration">{movie.duration} MIN</p>
-                    <p className="separator">|</p>
-                    <p className="card-genre">
-                      {movie.movieGenres[0].genre.name}
-                    </p>
-                  </div>
-                }
-              />
+                className="card-link-wrapper"
+                onClick={() => {
+                  window.scrollTo(0, 0);
+                }}
+              >
+                <Card
+                  photoUrl={coverPhoto.url}
+                  title={movie.title}
+                  description={
+                    <div className="card-duration-genre">
+                      <p className="card-duration">{movie.duration} MIN</p>
+                      <p className="separator">|</p>
+                      <p className="card-genre">
+                        {movie.movieGenres[0].genre.name}
+                      </p>
+                    </div>
+                  }
+                />
+              </Link>
             );
           })}
-        </HomepageSection>
+        </HomepageGridSection>
 
-        <HomepageSection
+        <HomepageGridSection
           title="Upcoming Movies"
           itemsPerPage={DEFAULT_SIZE}
           currentPage={upcomingMoviesPage}
@@ -85,25 +94,33 @@ export const Home = () => {
               movie.photos[0];
 
             return (
-              <Card
+              <Link
+                to={`/movies/${movie.id}`}
                 key={movie.id}
-                photoUrl={coverPhoto.url}
-                title={movie.title}
-                description={
-                  <div className="card-duration-genre">
-                    <p className="card-duration">{movie.duration} MIN</p>
-                    <p className="separator">|</p>
-                    <p className="card-genre">
-                      {movie.movieGenres[0].genre.name}
-                    </p>
-                  </div>
-                }
-              />
+                className="card-link-wrapper"
+                onClick={() => {
+                  window.scrollTo(0, 0);
+                }}
+              >
+                <Card
+                  photoUrl={coverPhoto.url}
+                  title={movie.title}
+                  description={
+                    <div className="card-duration-genre">
+                      <p className="card-duration">{movie.duration} MIN</p>
+                      <p className="separator">|</p>
+                      <p className="card-genre">
+                        {movie.movieGenres[0].genre.name}
+                      </p>
+                    </div>
+                  }
+                />
+              </Link>
             );
           })}
-        </HomepageSection>
+        </HomepageGridSection>
 
-        <HomepageSection
+        <HomepageGridSection
           title="Venues"
           itemsPerPage={DEFAULT_SIZE}
           currentPage={venuesPage}
@@ -118,7 +135,7 @@ export const Home = () => {
               description={<p className="venue-street">{venue.street}</p>}
             />
           ))}
-        </HomepageSection>
+        </HomepageGridSection>
       </div>
     </div>
   );

@@ -8,21 +8,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "genres")
 public class Genre {
 
@@ -45,4 +38,38 @@ public class Genre {
     @OneToMany(mappedBy = "genre", orphanRemoval = true)
     @JsonIgnore
     private List<MovieGenre> movieGenres;
+
+    public Genre() {}
+
+    public Genre(final UUID id,
+                 final String name,
+                 final Instant createdAt,
+                 final Instant updatedAt,
+                 final List<MovieGenre> movieGenres) {
+        this.id = id;
+        this.name = name;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.movieGenres = movieGenres;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public Instant getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public List<MovieGenre> getMovieGenres() {
+        return movieGenres;
+    }
 }

@@ -5,10 +5,11 @@ import "./card.scss";
 export type CardProps = {
   photoUrl: string;
   title: string;
-  description: ReactNode;
+  description?: ReactNode;
   extra?: ReactNode;
   layout?: "vertical" | "horizontal";
   className?: string;
+  size?: "default" | "small";
 };
 
 export const Card = ({
@@ -18,9 +19,10 @@ export const Card = ({
   extra,
   layout = "vertical",
   className = "",
+  size = "default",
 }: CardProps) => {
   return (
-    <div className={`card-container ${className} ${layout}`}>
+    <div className={`card-container ${className} ${layout} ${size}`}>
       <img className="card-img" src={photoUrl} />
       <div className="card-content">
         <h4 className="card-title" title={title}>

@@ -26,9 +26,12 @@ export const useUpcomingMovies = ({
   cinema,
 }: UseUpcomingProps = {}) => {
   const [data, setData] = React.useState<UpcomingResponse | null>(null);
+  const [isLoading, setIsLoading] = React.useState<boolean>(true);
 
   React.useEffect(() => {
     function fetchUpcomingMovies() {
+      setIsLoading(true);
+
       const pageable = clearEmptyMovieFilters(
         { page, size },
         { title, genres, city, cinema }
@@ -46,11 +49,14 @@ export const useUpcomingMovies = ({
         })
         .catch((error) => {
           console.error("Failed to fetch upcoming movies:", error);
+        })
+        .finally(() => {
+          setIsLoading(false);
         });
     }
 
     fetchUpcomingMovies();
   }, [page, size, title, genres, city, cinema]);
 
-  return { data };
+  return { data, isLoading };
 };

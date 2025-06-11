@@ -2,22 +2,15 @@ package com.atlantbh.cinemaapp.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 @Table(name = "screenings")
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
 public class Screening {
 
     @Id
@@ -44,4 +37,68 @@ public class Screening {
     @Column
     @UpdateTimestamp
     private Instant updatedAt;
+
+    public Screening() {}
+
+    public Screening(final UUID id,
+                     final Movie movie,
+                     final Hall hall,
+                     final LocalDateTime startTime,
+                     final Instant createdAt,
+                     final Instant updatedAt) {
+        this.id = id;
+        this.movie = movie;
+        this.hall = hall;
+        this.startTime = startTime;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(final UUID id) {
+        this.id = id;
+    }
+
+    public Movie getMovie() {
+        return movie;
+    }
+
+    public void setMovie(final Movie movie) {
+        this.movie = movie;
+    }
+
+    public Hall getHall() {
+        return hall;
+    }
+
+    public void setHall(final Hall hall) {
+        this.hall = hall;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(final LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(final Instant createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Instant getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(final Instant updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 }

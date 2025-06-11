@@ -1,12 +1,18 @@
 import "./dateBox.scss";
 
 export type DateBoxProps = {
-  date: Date;
+  date: string;
   isSelected: boolean;
   onSelect: () => void;
+  className?: string;
 };
 
-export const DateBox = ({ date, isSelected, onSelect }: DateBoxProps) => {
+export const DateBox = ({
+  date,
+  isSelected,
+  onSelect,
+  className,
+}: DateBoxProps) => {
   const dateObj = new Date(date);
   const formattedDate = dateObj.toLocaleDateString("en-US", {
     month: "short",
@@ -21,7 +27,7 @@ export const DateBox = ({ date, isSelected, onSelect }: DateBoxProps) => {
     : dateObj.toLocaleDateString("en-US", { weekday: "short" });
 
   return (
-    <div className="datebox-container">
+    <div className={`datebox-container ${className}`}>
       <div
         className={`date-block ${isSelected ? "selected" : ""}`}
         onClick={onSelect}

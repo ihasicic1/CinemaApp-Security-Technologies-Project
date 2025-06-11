@@ -15,7 +15,7 @@ export type HomepageSectionProps = {
   link?: string;
 };
 
-export function HomepageSection({
+export function HomepageGridSection({
   title,
   className = "",
   children,

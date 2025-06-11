@@ -9,20 +9,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "movie_genre")
 public class MovieGenre {
 
@@ -47,4 +40,38 @@ public class MovieGenre {
     @Column
     @UpdateTimestamp
     private Instant updatedAt;
+
+    public MovieGenre() {}
+
+    public MovieGenre(final UUID id,
+                      final Movie movie,
+                      final Genre genre,
+                      final Instant createdAt,
+                      final Instant updatedAt) {
+        this.id = id;
+        this.movie = movie;
+        this.genre = genre;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public Movie getMovie() {
+        return movie;
+    }
+
+    public Genre getGenre() {
+        return genre;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public Instant getUpdatedAt() {
+        return updatedAt;
+    }
 }

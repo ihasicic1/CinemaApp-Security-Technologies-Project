@@ -5,6 +5,7 @@
   background-color: #1d2939;
   display: flex;
   justify-content: center;
+  align-items: center;
   height: 80px;
   width: 100%;
   max-width: 100%;
@@ -12,10 +13,9 @@
 
   .header-frame {
     display: flex;
+    justify-content: space-between;
     height: 48px;
     width: 1256px;
-    margin-top: 16px;
-    gap: 317px;
 
     .logo-link {
       display: flex;

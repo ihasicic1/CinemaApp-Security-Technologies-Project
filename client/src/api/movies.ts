@@ -2,6 +2,12 @@ import { axiosApp } from "./axiosApp";
 import type { Movie, MovieFiltersWithPageable } from "./types";
 import type { Pageable, ResponseType } from "../utils";
 
+export type MovieRating = {
+  id: string;
+  name: string;
+  rating: string;
+};
+
 export const getLatestMovies = async (): Promise<ResponseType<Movie>> => {
   const response = await axiosApp.get("/movies/latest");
 
@@ -25,5 +31,28 @@ export const getUpcomingMovies = async (
     params: { ...pageable },
   });
 
+  return response.data;
+};
+
+export const getMovieById = async (movieId: string): Promise<Movie> => {
+  const response = await axiosApp.get(`/movies/${movieId}`);
+  return response.data;
+};
+
+export const getSimilarMovies = async (
+  movieId: string,
+  pageable: Pageable
+): Promise<ResponseType<Movie>> => {
+  const response = await axiosApp.get(`/movies/${movieId}/similar`, {
+    params: { ...pageable },
+  });
+
+  return response.data;
+};
+
+export const getMovieRatings = async (
+  movieId: string
+): Promise<MovieRating[]> => {
+  const response = await axiosApp.get(`/movies/${movieId}/ratings`);
   return response.data;
 };

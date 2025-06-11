@@ -10,21 +10,14 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "venues")
 public class Venue {
 
@@ -57,4 +50,56 @@ public class Venue {
     @OneToMany(mappedBy = "venue")
     @JsonIgnore
     private List<Hall> halls;
+
+    public Venue() {}
+
+    public Venue(final UUID id,
+                 final String name,
+                 final String street,
+                 final String imageUrl,
+                 final Instant createdAt,
+                 final Instant updatedAt,
+                 final Location location,
+                 final List<Hall> halls) {
+        this.id = id;
+        this.name = name;
+        this.street = street;
+        this.imageUrl = imageUrl;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.location = location;
+        this.halls = halls;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getStreet() {
+        return street;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public Instant getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public List<Hall> getHalls() {
+        return halls;
+    }
 }
