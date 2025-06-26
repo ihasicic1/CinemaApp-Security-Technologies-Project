@@ -1,6 +1,7 @@
 package com.atlantbh.cinemaapp.entity;
 
 import com.atlantbh.cinemaapp.enums.PgRating;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

@@ -2,7 +2,9 @@ package com.atlantbh.cinemaapp.controller;
 
 import com.atlantbh.cinemaapp.dto.MovieRating;
 import com.atlantbh.cinemaapp.entity.Movie;
+import com.atlantbh.cinemaapp.entity.Screening;
 import com.atlantbh.cinemaapp.service.MovieService;
+import com.atlantbh.cinemaapp.service.ScreeningService;
 import com.atlantbh.cinemaapp.util.Pagination;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -24,9 +26,11 @@ import java.util.UUID;
 public class MovieController {
 
     private final MovieService movieService;
+    private final ScreeningService screeningService;
 
-    public MovieController(final MovieService movieService) {
+    public MovieController(final MovieService movieService, final ScreeningService screeningService) {
         this.movieService = movieService;
+        this.screeningService = screeningService;
     }
 
     @GetMapping("/{movieId}")
@@ -80,5 +84,10 @@ public class MovieController {
     @GetMapping("/{movieId}/ratings")
     public ResponseEntity<List<MovieRating>> getMovieRatings(@PathVariable final UUID movieId) {
         return ResponseEntity.ok(movieService.getMovieRatings(movieId));
+    }
+
+    @GetMapping("/movies/{movieId}/screenings")
+    public ResponseEntity<List<Screening>> getScreeningsByMovieId(@PathVariable final UUID movieId) {
+        return ResponseEntity.ok(screeningService.getScreeningsByMovieId(movieId));
     }
 }

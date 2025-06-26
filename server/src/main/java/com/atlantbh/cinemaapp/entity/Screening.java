@@ -1,6 +1,7 @@
 package com.atlantbh.cinemaapp.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -20,7 +21,7 @@ public class Screening {
 
     @ManyToOne
     @JoinColumn(name = "movie_id", nullable = false)
-    @JsonIgnore
+    @JsonIgnoreProperties({"screenings", "synopsis", "trailerUrl", "director", "createdAt", "updatedAt", "movieGenres", "movieWriters", "roles"})
     private Movie movie;
 
     @ManyToOne
