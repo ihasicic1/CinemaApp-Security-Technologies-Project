@@ -94,7 +94,7 @@ export const CurrentlyShowingMovies = () => {
 
       <div className="currently-showing-movies-list-container">
         {isLoading ? (
-          <Loading size="large" />
+          <Loading />
         ) : showEmptyState ? (
           <MoviePagesEmpty type="currently-showing" />
         ) : (

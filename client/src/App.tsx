@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ConfigProvider } from "antd";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import { Footer, Header } from "./components";
+import { Footer, Header, SeatOptions, Payment } from "./components";
 import {
   AboutUs,
   CurrentlyShowingMovies,
@@ -53,6 +53,11 @@ const App = () => {
                 />
                 <Route path="/upcoming" element={<UpcomingMovies />} />
                 <Route path="/movies/:movieId" element={<MovieDetails />} />
+                <Route
+                  path="/screenings/:screeningId/seats"
+                  element={<SeatOptions />}
+                />
+                <Route path="/payment/:screeningId" element={<Payment />} />
               </Routes>
               <Footer />
             </Router>
