@@ -1,0 +1,45 @@
+services:
+  ilhanbe:
+    container_name: ilhanbe
+    image: registry.praksa.abhapp.com/ilhan-be:${TAG}
+    ports:
+      - "127.0.0.1:8083:8080"
+    environment:
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_URL=${DB_URL}
+      - OMDB_API_KEY=${OMDB_API_KEY}
+      - JWT_PRIVATE_KEY=file:/app/jwt/app.key
+      - JWT_PUBLIC_KEY=file:/app/jwt/app.pub
+    networks:
+      - ilhan-network
+    depends_on:
+      - postgres-ilhan
+    volumes:
+      - /home/ec2-user/ilhan/jwt:/app/jwt:ro
+  ilhanfe:
+    container_name: ilhanfe
+    image: registry.praksa.abhapp.com/ilhan-fe:${TAG}
+    ports:
+      - "127.0.0.1:3003:80"
+    networks:
+      - ilhan-network
+  postgres-ilhan:
+    container_name: postgres-ilhan
+    image: postgres:latest
+    ports:
+      - "127.0.0.1:5435:5432"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    networks:
+      - ilhan-network
+    volumes:
+      - ilhan-data:/var/lib/postgresql/data
+networks:
+  ilhan-network:
+    name: ilhan-network
+    driver: bridge
+volumes:
+  ilhan-data:
