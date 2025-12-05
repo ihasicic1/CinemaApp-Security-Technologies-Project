@@ -115,7 +115,8 @@ CinemaApp is a web-based ticketing platform designed for a movie company with mu
    You can refer to the `.env.example` file in the frontend project root directory. Copy its contents into a new `.env` file and update the values accordingly:
 
    ```env
-   VITE_API_BASE_URL=http://localhost:8080
+   VITE_API_BASE_URL=backend_url/api
+   STRIPE_PUBLIC_KEY=
    ```
 
 3. Install dependencies:
