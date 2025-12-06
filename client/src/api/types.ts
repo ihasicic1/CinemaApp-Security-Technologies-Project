@@ -7,6 +7,17 @@ export enum PGRating {
   R = "R",
 }
 
+export enum SeatType {
+  REGULAR = "REGULAR",
+  VIP = "VIP",
+  LOVE = "LOVE",
+}
+
+export enum TicketStatus {
+  PENDING = "PENDING",
+  PURCHASED = "PURCHASED",
+}
+
 export type Movie = {
   id: string;
   title: string;
@@ -69,6 +80,7 @@ export type Genre = {
 
 export type Screening = {
   id: string;
+  movie: Movie;
   hall: Hall;
   startTime: Date;
 };
@@ -77,6 +89,7 @@ export type Hall = {
   id: string;
   name: string;
   venue: Venue;
+  seats: Seat[];
 };
 
 export type Location = {
@@ -106,4 +119,46 @@ export type AuthFormErrors = {
   password?: string;
   confirmPassword?: string;
   general?: string;
+};
+
+export type Seat = {
+  id: string;
+  seatCode: string;
+  seatType: string;
+  hall: Hall;
+};
+
+export type Ticket = {
+  id: string;
+  price: number;
+  status: TicketStatus;
+  bookingDate: Date;
+  screening: Screening;
+  user: User;
+  seatBookings: {
+    id: string;
+    seat: Seat;
+  }[];
+};
+
+export type SeatBooking = {
+  id: string;
+  ticket: Ticket;
+  seat: Seat;
+};
+
+export type ScreeningFilters = {
+  movieId?: string;
+  city?: string;
+  cinema?: string;
+  date?: string;
+};
+
+export type ScreeningFiltersWithPageable = ScreeningFilters & Pageable;
+
+export type SeatAvailability = {
+  seatId: string;
+  seatCode: string;
+  seatType: SeatType;
+  taken: boolean;
 };

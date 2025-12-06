@@ -61,7 +61,7 @@ export const MovieMedia = ({ trailerUrl, photos }: MovieMediaProps) => {
           <div className="media-trailer-wrapper">
             {!trailerLoaded && (
               <div className="media-trailer-loader">
-                <Loading size="large" />
+                <Loading />
               </div>
             )}
             <iframe
@@ -80,7 +80,7 @@ export const MovieMedia = ({ trailerUrl, photos }: MovieMediaProps) => {
             <div className="media-trailer-cover">
               {!coverLoaded && (
                 <div className="media-image-loader">
-                  <Loading size="large" />
+                  <Loading />
                 </div>
               )}
               <img
@@ -108,7 +108,7 @@ export const MovieMedia = ({ trailerUrl, photos }: MovieMediaProps) => {
             <div key={photo.id} className="media-photo-wrapper">
               {!loadedImages[photo.id] && (
                 <div className="media-image-loader">
-                  <Loading size="default" />
+                  <Loading />
                 </div>
               )}
               <img

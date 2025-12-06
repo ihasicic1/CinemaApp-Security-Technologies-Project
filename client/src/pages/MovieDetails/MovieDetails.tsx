@@ -60,7 +60,7 @@ export const MovieDetails = () => {
     refetch: refetchRatings,
   } = useMovieRatings(movieId!);
 
-  if (isMovieLoading) return <Loading size="large" />;
+  if (isMovieLoading) return <Loading />;
 
   if (isMovieError || !movie) {
     return (

@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -46,6 +47,10 @@ public class Hall {
     @UpdateTimestamp
     private Instant updatedAt;
 
+    @OneToMany(mappedBy = "hall", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Seat> seats;
+
     public Hall() {}
 
     public Hall(final UUID id,
@@ -84,5 +89,9 @@ public class Hall {
 
     public Instant getUpdatedAt() {
         return updatedAt;
+    }
+
+    public Set<Seat> getSeats() {
+        return seats;
     }
 }

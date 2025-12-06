@@ -26,6 +26,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/user/**").authenticated()
+                        .requestMatchers("/api/payments/**").authenticated()
                         .anyRequest().permitAll()
                 )
                 .sessionManagement(session ->
@@ -35,7 +36,7 @@ public class SecurityConfig {
                         .bearerTokenResolver(request -> {
                             final String requestURI = request.getRequestURI();
 
-                            if (requestURI.startsWith("/api/user/")) {
+                            if (requestURI.startsWith("/api/user/") || requestURI.startsWith("/api/payments/")) {
                                 final String authorization = request.getHeader("Authorization");
                                 if (authorization != null && authorization.startsWith("Bearer ")) {
                                     return authorization.substring(7);

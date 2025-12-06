@@ -1,17 +1,14 @@
-import { Spin } from "antd";
-import { LoadingOutlined } from "@ant-design/icons";
-import type { SpinProps } from "antd";
-
+import { Skeleton } from "antd";
 import "./loading.scss";
 
 export type LoadingProps = {
-  size?: SpinProps["size"];
+  rows?: number;
 };
 
-export const Loading = ({ size }: LoadingProps) => {
+export const Loading = ({ rows = 3 }: LoadingProps) => {
   return (
     <div className="loading-container">
-      <Spin indicator={<LoadingOutlined spin />} size={size} />
+      <Skeleton active title={{ width: "60%" }} paragraph={{ rows }} />
     </div>
   );
 };

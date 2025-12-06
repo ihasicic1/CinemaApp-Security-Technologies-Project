@@ -1,14 +1,20 @@
 import { useMemo, useState, useCallback, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Select } from "antd";
 import { EnvironmentOutlined, HomeOutlined } from "@ant-design/icons";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 
-import { useAllVenues, useAllLocations, useCurrentUser } from "../../hooks";
+import {
+  useAllVenues,
+  useAllLocations,
+  useCurrentUser,
+  useScreenings,
+} from "../../hooks";
 import { DateList } from "../DateList";
 import { Showtimes } from "../Showtimes";
 import { Button } from "../Button";
-import { Movie } from "../../api";
+import { Movie, Screening } from "../../api";
 import NotifyBell from "../../assets/img/NotifyBell.png";
 
 import "./ticketSection.scss";
@@ -24,17 +30,28 @@ export type TicketSectionProps = {
 };
 
 export const TicketSection = ({ movie }: TicketSectionProps) => {
+  const navigate = useNavigate();
   const { data: currentUser } = useCurrentUser();
   const { data: venuesData } = useAllVenues();
   const { data: locationsData } = useAllLocations();
   const dateListRef = useRef<HTMLDivElement | null>(null);
   const [isLeftDisabled, setIsLeftDisabled] = useState<boolean>(true);
   const [isRightDisabled, setIsRightDisabled] = useState<boolean>(false);
+  const [selectedScreening, setSelectedScreening] = useState<Screening | null>(
+    null
+  );
 
   const [filters, setFilters] = useState<TicketFilters>({
     city: "",
     cinema: "",
     date: new Date().toISOString().split("T")[0],
+  });
+
+  const { data: screenings, isLoading: areScreeningsLoading } = useScreenings({
+    movieId: movie?.id,
+    city: filters.city || undefined,
+    cinema: filters.cinema || undefined,
+    date: filters.date,
   });
 
   const isUpcoming = useMemo(() => {
@@ -59,6 +76,7 @@ export const TicketSection = ({ movie }: TicketSectionProps) => {
   const handleFilterChange = useCallback(
     (filterType: keyof TicketFilters, value: string) => {
       setFilters((prev) => ({ ...prev, [filterType]: value }));
+      setSelectedScreening(null);
     },
     []
   );
@@ -72,28 +90,30 @@ export const TicketSection = ({ movie }: TicketSectionProps) => {
     [locationsData]
   );
 
-  const cinemaOptions = useMemo(
-    () =>
-      venuesData?.map((venue) => ({
-        value: venue.name,
-        label: venue.name,
-      })) || [],
-    [venuesData]
-  );
+  const cinemaOptions = useMemo(() => {
+    if (!venuesData) return [];
 
-  const filteredShowtimes = useMemo(() => {
-    if (!movie) return [];
-    console.log("screen", movie.screenings);
-    console.log("filter date", filters.date);
-    return movie.screenings.filter((screening) => {
-      const screeningDate = new Date(screening.startTime)
-        .toISOString()
-        .split("T")[0];
-      console.log("screenDate", screening.startTime);
-      console.log("screen starttime", screening.startTime);
-      return screeningDate === filters.date;
-    });
-  }, [movie, filters.date]);
+    const filteredVenues = filters.city
+      ? venuesData.filter((venue) => venue.location.city === filters.city)
+      : venuesData;
+
+    return filteredVenues.map((venue) => ({
+      value: venue.name,
+      label: venue.name,
+    }));
+  }, [venuesData, filters.city]);
+
+  const filteredShowtimes = screenings?.content || [];
+
+  const handleScreeningSelect = useCallback((screening: Screening) => {
+    setSelectedScreening(screening);
+  }, []);
+
+  const handleBuyTicket = useCallback(() => {
+    if (!movie || !selectedScreening || !currentUser) return;
+
+    navigate(`/screenings/${selectedScreening.id}/seats`);
+  }, [movie, selectedScreening, currentUser, navigate]);
 
   const handleScroll = (direction: "left" | "right") => {
     if (!dateListRef.current) return;
@@ -125,6 +145,16 @@ export const TicketSection = ({ movie }: TicketSectionProps) => {
     return () => window.removeEventListener("resize", checkScrollPosition);
   }, [checkScrollPosition, venuesData]);
 
+  // Reset selected screening when filtered showtimes change
+  useEffect(() => {
+    if (
+      selectedScreening &&
+      !filteredShowtimes.find((s) => s.id === selectedScreening.id)
+    ) {
+      setSelectedScreening(null);
+    }
+  }, [filteredShowtimes, selectedScreening]);
+
   if (isUpcoming) {
     return (
       <div className="ticket-section-container">
@@ -154,19 +184,23 @@ export const TicketSection = ({ movie }: TicketSectionProps) => {
             size="large"
             prefix={<EnvironmentOutlined className="filter-icon" />}
             placeholder="All Cities"
-            onChange={(value) => handleFilterChange("city", value)}
+            value={filters.city || undefined}
+            onChange={(value) => handleFilterChange("city", value || "")}
             options={cityOptions}
             className="filters-select-dropdown"
             allowClear
+            loading={areScreeningsLoading}
           />
           <Select
             size="large"
             prefix={<HomeOutlined className="filter-icon" />}
             placeholder="All Cinemas"
-            onChange={(value) => handleFilterChange("cinema", value)}
+            value={filters.cinema || undefined}
+            onChange={(value) => handleFilterChange("cinema", value || "")}
             options={cinemaOptions}
             className="filters-select-dropdown"
             allowClear
+            loading={areScreeningsLoading}
           />
         </div>
 
@@ -200,7 +234,12 @@ export const TicketSection = ({ movie }: TicketSectionProps) => {
           </div>
         </div>
 
-        <Showtimes showtimes={filteredShowtimes} />
+        <Showtimes
+          showtimes={filteredShowtimes}
+          selectedScreening={selectedScreening}
+          onScreeningSelect={handleScreeningSelect}
+          isLoading={areScreeningsLoading}
+        />
       </div>
 
       <div className="ticket-actions">
@@ -214,7 +253,8 @@ export const TicketSection = ({ movie }: TicketSectionProps) => {
           variant="primary"
           className="buy-button"
           label="Buy Ticket"
-          disabled={!currentUser}
+          disabled={!currentUser || !selectedScreening || areScreeningsLoading}
+          onClick={handleBuyTicket}
         />
       </div>
     </div>
