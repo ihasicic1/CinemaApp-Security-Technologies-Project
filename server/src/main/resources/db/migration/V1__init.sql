@@ -70,19 +70,19 @@ VALUES ('Sarajevo', 'Bosnia and Herzegovina');
 INSERT INTO venues (name, street, image_url, location_id)
 VALUES
 
-    ('Cineplex', 'Zmaja od Bosne 4, 71000 Sarajevo', 'https://vsfcbekllchxbgylfrta.supabase.co/storage/v1/object/public/images/venues/Cineplexx1.jpg',
+    ('Cineplex', 'Zmaja od Bosne 4, 71000 Sarajevo', 'https://wzdbqcgtygvmtfdajvio.supabase.co/storage/v1/object/public/CinemaAppPhotos/vsfcbekllchxbgylfrta/images/venues/Cineplexx1.jpg',
     (SELECT id FROM locations WHERE city = 'Sarajevo')),
 
-    ('Cinestar', 'Dzemala Bijedica St 160n, Sarajevo 71000', 'https://vsfcbekllchxbgylfrta.supabase.co/storage/v1/object/public/images/venues/cinestar-1-318893.jpeg',
+    ('Cinestar', 'Dzemala Bijedica St 160n, Sarajevo 71000', 'https://wzdbqcgtygvmtfdajvio.supabase.co/storage/v1/object/public/CinemaAppPhotos/vsfcbekllchxbgylfrta/images/venues/cinestar-1-318893.jpeg',
     (SELECT id FROM locations WHERE city = 'Sarajevo')),
 
-    ('Kino Meeting Point', 'Hamdije Kreševljakovića 13, Sarajevo 71000', 'https://vsfcbekllchxbgylfrta.supabase.co/storage/v1/object/public/images/venues/kino-meeting-point-1589194182.jpg',
+    ('Kino Meeting Point', 'Hamdije Kreševljakovića 13, Sarajevo 71000', 'https://wzdbqcgtygvmtfdajvio.supabase.co/storage/v1/object/public/CinemaAppPhotos/vsfcbekllchxbgylfrta/images/venues/kino-meeting-point-1589194182.jpg',
     (SELECT id FROM locations WHERE city = 'Sarajevo')),
 
-    ('Kino Novi Grad Sarajevo', 'Bulevar Meše Selimovića 97, Sarajevo 71000', 'https://vsfcbekllchxbgylfrta.supabase.co/storage/v1/object/public/images/venues/Kino-Novi-Grad-Sarajevo.jpg',
+    ('Kino Novi Grad Sarajevo', 'Bulevar Meše Selimovića 97, Sarajevo 71000', 'https://wzdbqcgtygvmtfdajvio.supabase.co/storage/v1/object/public/CinemaAppPhotos/vsfcbekllchxbgylfrta/images/venues/Kino-Novi-Grad-Sarajevo.jpg',
     (SELECT id FROM locations WHERE city = 'Sarajevo')),
 
-    ('Kinoteka Bosne i Hercegovine', 'Alipašina 19, Sarajevo 71000', 'https://vsfcbekllchxbgylfrta.supabase.co/storage/v1/object/public/images/venues/Kino-dvorana-Kinoteke-BiH.jpg',
+    ('Kinoteka Bosne i Hercegovine', 'Alipašina 19, Sarajevo 71000', 'https://wzdbqcgtygvmtfdajvio.supabase.co/storage/v1/object/public/CinemaAppPhotos/vsfcbekllchxbgylfrta/images/venues/Kino-dvorana-Kinoteke-BiH.jpg',
     (SELECT id FROM locations WHERE city = 'Sarajevo'));
 
 
@@ -154,31 +154,31 @@ SELECT movie_id, genre_id FROM movie_genres;
 
 INSERT INTO movie_photos (url, is_cover_image, movie_id)
 VALUES
-    ('https://vsfcbekllchxbgylfrta.supabase.co/storage/v1/object/public/images/movies/Avatar/avatar-cover.jpg', true,
+    ('https://wzdbqcgtygvmtfdajvio.supabase.co/storage/v1/object/public/CinemaAppPhotos/vsfcbekllchxbgylfrta/images/movies/Avatar/avatar-cover.jpg', true,
      (SELECT id FROM movies WHERE title = 'Avatar: The Way of Water')),
-    ('https://vsfcbekllchxbgylfrta.supabase.co/storage/v1/object/public/images/movies/Avatar/avatar2.jpg', false,
+    ('https://wzdbqcgtygvmtfdajvio.supabase.co/storage/v1/object/public/CinemaAppPhotos/vsfcbekllchxbgylfrta/images/movies/Avatar/avatar2.jpg', false,
      (SELECT id FROM movies WHERE title = 'Avatar: The Way of Water')),
-    ('https://vsfcbekllchxbgylfrta.supabase.co/storage/v1/object/public/images/movies/Mickey17/mickey17-cover.jpg', true,
+    ('https://wzdbqcgtygvmtfdajvio.supabase.co/storage/v1/object/public/CinemaAppPhotos/vsfcbekllchxbgylfrta/images/movies/Mickey17/mickey-17-k5.jpg', true,
      (SELECT id FROM movies WHERE title = 'Mickey 17')),
-    ('https://vsfcbekllchxbgylfrta.supabase.co/storage/v1/object/public/images/movies/Oppenheimer/oppenheimer-cover.jpg', true,
+    ('https://wzdbqcgtygvmtfdajvio.supabase.co/storage/v1/object/public/CinemaAppPhotos/vsfcbekllchxbgylfrta/images/movies/Oppenheimer/oppeneimer-cover.jpg', true,
      (SELECT id FROM movies WHERE title = 'Oppenheimer')),
-    ('https://vsfcbekllchxbgylfrta.supabase.co/storage/v1/object/public/images/movies/Interstellar/interstellar-cover.jpg', true,
+    ('https://wzdbqcgtygvmtfdajvio.supabase.co/storage/v1/object/public/CinemaAppPhotos/vsfcbekllchxbgylfrta/images/movies/Interstellar/interstellar-cover.jpg', true,
      (SELECT id FROM movies WHERE title = 'Interstellar')),
-    ('https://vsfcbekllchxbgylfrta.supabase.co/storage/v1/object/public/images/movies/BlackPearl/blackpearl-cover.jpg', true,
+    ('https://wzdbqcgtygvmtfdajvio.supabase.co/storage/v1/object/public/CinemaAppPhotos/vsfcbekllchxbgylfrta/images/movies/BlackPearl/blackpearl-cover.jpg', true,
      (SELECT id FROM movies WHERE title = 'Pirates of the Caribbean: The Curse of the Black Pearl')),
-    ('https://vsfcbekllchxbgylfrta.supabase.co/storage/v1/object/public/images/movies/OnceUpon/onceupon-cover.jpg', true,
+    ('https://wzdbqcgtygvmtfdajvio.supabase.co/storage/v1/object/public/CinemaAppPhotos/vsfcbekllchxbgylfrta/images/movies/OnceUpon/onceupon-cover.jpg', true,
      (SELECT id FROM movies WHERE title = 'Once Upon a Time... in Hollywood')),
-    ('https://vsfcbekllchxbgylfrta.supabase.co/storage/v1/object/public/images/movies/Minecraft/minecraft-cover.jpg', true,
+    ('https://wzdbqcgtygvmtfdajvio.supabase.co/storage/v1/object/public/CinemaAppPhotos/vsfcbekllchxbgylfrta/images/movies/Minecraft/minecraft-cover.jpg', true,
      (SELECT id FROM movies WHERE title = 'Minecraft')),
-    ('https://vsfcbekllchxbgylfrta.supabase.co/storage/v1/object/public/images/movies/CaptainAmericaBraveNewWorld/captainamerica-cover.jpg', true,
+    ('https://wzdbqcgtygvmtfdajvio.supabase.co/storage/v1/object/public/CinemaAppPhotos/vsfcbekllchxbgylfrta/images/movies/CaptainAmericaBraveNewWorld/captainamerica-cover.jpg', true,
      (SELECT id FROM movies WHERE title = 'Captain America: Brave New World')),
-    ('https://vsfcbekllchxbgylfrta.supabase.co/storage/v1/object/public/images/movies/TheUnion/theunion-cover.jpg', true,
+    ('https://wzdbqcgtygvmtfdajvio.supabase.co/storage/v1/object/public/CinemaAppPhotos/vsfcbekllchxbgylfrta/images/movies/TheUnion/theunion-cover.jpg', true,
      (SELECT id FROM movies WHERE title = 'The Union')),
-    ('https://vsfcbekllchxbgylfrta.supabase.co/storage/v1/object/public/images/movies/GladiatorII/gladiator2-cover.jpg', true,
+    ('https://wzdbqcgtygvmtfdajvio.supabase.co/storage/v1/object/public/CinemaAppPhotos/vsfcbekllchxbgylfrta/images/movies/GladiatorII/gladiator2-cover.jpg', true,
      (SELECT id FROM movies WHERE title = 'Gladiator II')),
-    ('https://vsfcbekllchxbgylfrta.supabase.co/storage/v1/object/public/images/movies/BlinkTwice/blinktwice-cover.jpg', true,
+    ('https://wzdbqcgtygvmtfdajvio.supabase.co/storage/v1/object/public/CinemaAppPhotos/vsfcbekllchxbgylfrta/images/movies/BlinkTwice/blinktwice-cover.jpg', true,
      (SELECT id FROM movies WHERE title = 'Blink Twice')),
-    ('https://vsfcbekllchxbgylfrta.supabase.co/storage/v1/object/public/images/movies/Wicked/wicked-cover.jpg', true,
+    ('https://wzdbqcgtygvmtfdajvio.supabase.co/storage/v1/object/public/CinemaAppPhotos/vsfcbekllchxbgylfrta/images/movies/Wicked/wicked-cover.jpg', true,
      (SELECT id FROM movies WHERE title = 'Wicked'));
 
 COMMIT;

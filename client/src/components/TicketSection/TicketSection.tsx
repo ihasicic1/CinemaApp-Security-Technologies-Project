@@ -83,11 +83,15 @@ export const TicketSection = ({ movie }: TicketSectionProps) => {
 
   const filteredShowtimes = useMemo(() => {
     if (!movie) return [];
-
+    console.log("screen", movie.screenings);
+    console.log("filter date", filters.date);
     return movie.screenings.filter((screening) => {
-      const screeningDate = new Date(screening.startTime);
-
-      return screeningDate.toDateString() === filters.date;
+      const screeningDate = new Date(screening.startTime)
+        .toISOString()
+        .split("T")[0];
+      console.log("screenDate", screening.startTime);
+      console.log("screen starttime", screening.startTime);
+      return screeningDate === filters.date;
     });
   }, [movie, filters.date]);
 
