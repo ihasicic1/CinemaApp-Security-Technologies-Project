@@ -11,9 +11,13 @@ import {
   Pricing,
   UpcomingMovies,
 } from "./pages";
+import UsersAdmin from "./pages/AdminPanel/UsersAdmin";
+import AdminLayout from "./pages/AdminPanel/AdminLayout";
 import { AuthProvider } from "./contexts";
 
 import "./App.scss";
+import MoviesAdmin from "./pages/AdminPanel/MoviesAdmin";
+import VenuesAdmin from "./pages/AdminPanel/VenuesAdmin";
 
 const queryClient = new QueryClient();
 
@@ -58,6 +62,13 @@ const App = () => {
                   element={<SeatOptions />}
                 />
                 <Route path="/payment/:screeningId" element={<Payment />} />
+
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<UsersAdmin />} />
+                <Route path="users" element={<UsersAdmin />} />
+                <Route path="movies" element={<MoviesAdmin />} />
+                <Route path="venues" element={<VenuesAdmin />} />
+              </Route>
               </Routes>
               <Footer />
             </Router>
