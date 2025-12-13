@@ -50,7 +50,7 @@ CinemaApp is a web-based ticketing platform designed for a movie company with mu
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/ihasicic1/CinemaApp.git
+   git clone https://github.com/ihasicic1/CinemaApp-Security-Technologies-Project.git cinema-app
    cd cinema-app
    ```
 
@@ -69,7 +69,24 @@ CinemaApp is a web-based ticketing platform designed for a movie company with mu
    DB_PASSWORD=your_database_password
    DB_URL=your_database_url_and_name
    OMDB_API_KEY=your_omdb_api_key
+   STRIPE_SECRET_KEY=your_stripe_secret_key
+   SMTP_HOST=your_email_provider_host (for example smtp.gmail.com)
+   SMTP_PORT=your_email_provider_port (587 in case of gmail)
+   EMAIL_USERNAME=your_email_address (e.g. example@gmail.com)
+   EMAIL_PASSWORD=your_email_password
+   FRONTEND_URL=http://localhost:5173 (in case of running locally)
    ```
+
+   > **In case of using gmail as your email provider**:
+   >
+   > - Go to Google Account Security
+   > - Enable 2-Step Verification if you haven’t already.
+   > - Under “Signing in to Google”, click App passwords.
+   > - Select: App -> Mail -> Device: Other (give a name like “Spring Boot App”)
+   > - Click Generate → Google gives you a 16-character password. Example: abcd efgh ijkl mnop
+   > - Use this app password as EMAIL_PASSWORD in your Spring Boot config.
+   > - Your EMAIL_USERNAME is still your Gmail address (example@gmail.com).
+
 
    > **To obtain an OMDb API Key**:
    >
@@ -77,6 +94,11 @@ CinemaApp is a web-based ticketing platform designed for a movie company with mu
    > - Choose the free or paid plan
    > - Enter your email address and generate your API key
    > - Add the key to your `.env` file as shown above
+
+   > **To obtain Stripe API Key**:
+   >
+   > - Visit https://docs.stripe.com/keys.
+   
 
 4. Generate RSA keys for JWT:
 
@@ -89,8 +111,10 @@ CinemaApp is a web-based ticketing platform designed for a movie company with mu
 
    - A private key file: `src/main/resources/jwt/app.key`
    - A public key file: `src/main/resources/jwt/app.pub`
+  
+5. 
 
-5. Build and run the Spring Boot application:
+6. Build and run the Spring Boot application:
 
    ```bash
    cd server
