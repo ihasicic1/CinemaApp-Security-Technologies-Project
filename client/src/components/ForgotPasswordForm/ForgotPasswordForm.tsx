@@ -46,9 +46,6 @@ export const ForgotPasswordForm = () => {
     }
   };
 
-  // -------------------------------------------------------
-  // NEW UI STATE: Email Sent Message
-  // -------------------------------------------------------
   if (emailSent) {
     return (
       <div className="auth-form">
@@ -64,9 +61,6 @@ export const ForgotPasswordForm = () => {
     );
   }
 
-  // -------------------------------------------------------
-  // ORIGINAL FORM
-  // -------------------------------------------------------
   return (
     <form className="auth-form" onSubmit={handleSubmit} noValidate>
       {errors?.general && <p className="auth-error-text">{errors.general}</p>}

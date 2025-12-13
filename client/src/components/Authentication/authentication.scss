@@ -136,4 +136,10 @@
       }
     }
   }
+
+  .auth-forgot-password {
+    color: variables.$neutral-400;
+    display: flex;
+    justify-content: flex-end;
+  }
 }

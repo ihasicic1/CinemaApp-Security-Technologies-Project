@@ -155,13 +155,16 @@ export const SignInForm = ({
         )}
 
         {onForgotPassword && (
-          <button
-            type="button"
-            className="auth-forgot-password-button"
-            onClick={onForgotPassword}
+          <a
+            href="#"
+            className="auth-change-type-link auth-forgot-password"
+            onClick={(e) => {
+              e.preventDefault();
+              onForgotPassword();
+            }}
           >
             Forgot password?
-          </button>
+          </a>
         )}
 
         <Button
