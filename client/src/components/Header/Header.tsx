@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { Authentication } from "../Authentication";
 import { Button } from "../Button";
@@ -11,9 +11,26 @@ import "./header.scss";
 
 export const Header = () => {
   const [authDrawerOpen, setAuthDrawerOpen] = useState<boolean>(false);
+  const [resetToken, setResetToken] = useState<string | undefined>(undefined);
   const { data: currentUser, isLoading } = useCurrentUser();
 
   const isAuthenticated = !isLoading && !!currentUser;
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token") || params.get("resetToken");
+
+    if (token) {
+      setResetToken(token);
+      setAuthDrawerOpen(true);
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, []);
+
+  const handleSignInClick = () => {
+    setResetToken(undefined);
+    setAuthDrawerOpen(true);
+  };
 
   return (
     <div className="header">
@@ -50,14 +67,18 @@ export const Header = () => {
             <Button
               label="Sign In"
               variant="navbar"
-              onClick={() => setAuthDrawerOpen(true)}
+              onClick={handleSignInClick}
             />
           )}
         </div>
 
         <Authentication
           isOpen={authDrawerOpen}
-          onClose={() => setAuthDrawerOpen(false)}
+          onClose={() => {
+            setAuthDrawerOpen(false);
+            setResetToken(undefined);
+          }}
+          resetToken={resetToken}
         />
       </div>
     </div>
