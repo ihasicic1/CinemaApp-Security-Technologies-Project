@@ -13,6 +13,8 @@ import {
 } from "./pages";
 import { AuthProvider } from "./contexts";
 
+import UserProfile from "./pages/Profile/UserProfile";
+
 import "./App.scss";
 
 const queryClient = new QueryClient();
@@ -47,6 +49,7 @@ const App = () => {
                 <Route path="/" element={<Home />} />
                 <Route path="/about" element={<AboutUs />} />
                 <Route path="/pricing" element={<Pricing />} />
+                <Route path="/profile" element={<UserProfile />} />
                 <Route
                   path="/currently-showing"
                   element={<CurrentlyShowingMovies />}
