@@ -3,30 +3,33 @@ import { useNavigate } from "react-router-dom";
 
 import { Button } from "../Button";
 import logo from "../../assets/img/Logo.png";
-import signIn from "../../assets/img/sign-in-success.png";
-import signUp from "../../assets/img/sign-up-success.png";
+import signInImg from "../../assets/img/sign-in-success.png";
+import signUpImg from "../../assets/img/sign-up-success.png";
 
 import "../Authentication/authentication.scss";
 
+export type SuccessScreenType = "signIn" | "signUp" | "resetPassword";
+
 export type SuccessScreenProps = {
-  type: "signIn" | "signUp";
+  type: SuccessScreenType;
   onClose: () => void;
-  redirectPath?: string;
 };
 
-export const SuccessScreen = ({
-  type,
-  onClose,
-  redirectPath = "/",
-}: SuccessScreenProps) => {
-  const isSignIn = type === "signIn";
+export const SuccessScreen = ({ type, onClose }: SuccessScreenProps) => {
   const navigate = useNavigate();
+  const isSignIn = type === "signIn";
+  const isSignUp = type === "signUp";
+  const isResetPassword = type === "resetPassword";
 
+  // Redirect destination based on type
+  const redirectPath = isResetPassword ? "/?openLogin=true" : "/";
+
+  // auto-close + redirect
   useEffect(() => {
     const timer = setTimeout(() => {
       onClose();
       navigate(redirectPath);
-    }, 3000);
+    }, 2500);
 
     return () => clearTimeout(timer);
   }, [navigate, onClose, redirectPath]);
@@ -36,45 +39,43 @@ export const SuccessScreen = ({
     navigate(redirectPath);
   };
 
-  const getDestinationInfo = () => {
-    if (redirectPath === "/") {
+  const { title, subtitle, buttonText, image } = (() => {
+    if (isResetPassword) {
       return {
-        destination: "homepage",
-        buttonText: isSignIn ? "Go to Home" : "See Movies",
+        title: "Password Reset Successful!",
+        subtitle: "You can now sign in with your new password.",
+        buttonText: "Go to Sign In",
+        image: signInImg,
       };
     }
 
-    if (redirectPath === "/buy-ticket") {
+    if (isSignUp) {
       return {
-        destination: "ticket booking page",
-        buttonText: "Continue Booking",
+        title: "You're all set!",
+        subtitle: "Start exploring latest movies, venues, and ticket options!",
+        buttonText: "See Movies",
+        image: signUpImg,
       };
     }
 
     return {
-      destination: "homepage",
-      buttonText: isSignIn ? "Go to Home" : "See Movies",
+      title: "Sign In Successful!",
+      subtitle: "You will be redirected to the homepage.",
+      buttonText: "Go to Home",
+      image: signInImg,
     };
-  };
-
-  const { destination, buttonText } = getDestinationInfo();
+  })();
 
   return (
     <div className="auth-container">
       <div className="auth-content">
         <img src={logo} alt="Logo" className="auth-logo-icon" />
-        <h5 className="auth-title">
-          {isSignIn ? "Sign In Successful!" : "You're all set!"}
-        </h5>
 
-        <p className="auth-subtitle">
-          {!isSignIn
-            ? "Start exploring latest movies, venues, and ticket options!"
-            : `You will be redirected to the ${destination}.`}
-        </p>
+        <h5 className="auth-title">{title}</h5>
+        <p className="auth-subtitle">{subtitle}</p>
 
         <div className="auth-success-image">
-          <img src={isSignIn ? signIn : signUp} alt="Success" />
+          <img src={image} alt="Success" />
         </div>
 
         <Button
@@ -82,9 +83,7 @@ export const SuccessScreen = ({
           label={buttonText}
           className="auth-submit-button"
           onClick={handleButtonClick}
-        >
-          {buttonText}
-        </Button>
+        />
       </div>
     </div>
   );

@@ -14,11 +14,13 @@ import {
 type SignInFormProps = {
   onSuccess: () => void;
   onToggleAuthType: () => void;
+  onForgotPassword?: () => void;
 };
 
 export const SignInForm = ({
   onSuccess,
   onToggleAuthType,
+  onForgotPassword,
 }: SignInFormProps) => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -150,6 +152,19 @@ export const SignInForm = ({
         </div>
         {errors?.password && (
           <p className="auth-error-text">{errors.password}</p>
+        )}
+
+        {onForgotPassword && (
+          <a
+            href="#"
+            className="auth-change-type-link auth-forgot-password"
+            onClick={(e) => {
+              e.preventDefault();
+              onForgotPassword();
+            }}
+          >
+            Forgot password?
+          </a>
         )}
 
         <Button
