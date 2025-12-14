@@ -13,7 +13,7 @@ public class CorsConfig {
             public void addCorsMappings(final CorsRegistry registry) {
                 registry.addMapping("/api/**")
                         .allowedOrigins(
-                            "http://localhost:5173",
+                            "https://localhost:5173",
                             "https://dev2-frontend.praksa.abhapp.com")
                         .allowedMethods("*")
                         .allowedHeaders("*")

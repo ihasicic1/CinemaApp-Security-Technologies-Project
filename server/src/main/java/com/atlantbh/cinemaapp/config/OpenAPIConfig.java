@@ -14,7 +14,7 @@ public class OpenAPIConfig {
     @Bean
     public OpenAPI configureCinemaAppSwaggerDocumentation() {
         final Server devServer = new Server();
-        devServer.setUrl("http://localhost:8080");
+        devServer.setUrl("https://localhost:8443");
         devServer.setDescription("Development server");
 
         final Contact contact = new Contact();
