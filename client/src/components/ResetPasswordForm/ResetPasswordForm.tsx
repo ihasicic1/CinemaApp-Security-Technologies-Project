@@ -1,8 +1,7 @@
-import { FaEnvelope, FaLock } from "react-icons/fa6";
+import { FaLock } from "react-icons/fa6";
 import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-import { useLogin } from "../../hooks";
 import { Button } from "../Button";
 import { usePasswordVisibility } from "../../utils";
 import { AuthFormErrors } from "../../api/types";
@@ -10,49 +9,73 @@ import {
   validateFieldValue,
   ValidationField,
 } from "../../utils/authValidation";
+import { useResetPassword } from "../../hooks";
 
-type SignInFormProps = {
+export type ResetPasswordFormProps = {
+  token: string;
   onSuccess: () => void;
-  onToggleAuthType: () => void;
-  onForgotPassword?: () => void;
 };
 
-export const SignInForm = ({
+export const ResetPasswordForm = ({
+  token,
   onSuccess,
-  onToggleAuthType,
-  onForgotPassword,
-}: SignInFormProps) => {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [errors, setErrors] = useState<AuthFormErrors | undefined>();
+}: ResetPasswordFormProps) => {
+  const [newPassword, setNewPassword] = useState<string>("");
+  const [repeatPassword, setRepeatPassword] = useState<string>("");
+  const [errors, setErrors] = useState<AuthFormErrors | undefined>(undefined);
   const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState<boolean>(false);
 
   const { visibleFields, toggleVisibility } = usePasswordVisibility();
-  const loginMutation = useLogin();
+  const resetPasswordMutation = useResetPassword();
+
+  useEffect(() => {
+    setNewPassword("");
+    setRepeatPassword("");
+    setErrors(undefined);
+    setHasAttemptedSubmit(false);
+    resetPasswordMutation.reset();
+  }, [token]);
 
   const validateForm = () => {
     const newErrors: AuthFormErrors = {};
 
-    const emailError = validateFieldValue("email", email);
-    const passwordError = validateFieldValue("password", password);
+    const passwordError = validateFieldValue("password", newPassword);
+    const repeatPasswordError = validateFieldValue(
+      "confirmPassword",
+      repeatPassword,
+      { password: newPassword }
+    );
 
-    if (emailError) newErrors.email = emailError;
     if (passwordError) newErrors.password = passwordError;
+    if (repeatPasswordError) newErrors.confirmPassword = repeatPasswordError;
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const validateField = (field: string, value: string) => {
+  const validateField = (field: ValidationField, value: string) => {
     if (!hasAttemptedSubmit) return;
 
     const newErrors: AuthFormErrors = { ...errors };
-    const error = validateFieldValue(field as ValidationField, value);
+    const error = validateFieldValue(field, value, { password: newPassword });
 
     if (error) {
-      newErrors[field as keyof AuthFormErrors] = error;
+      newErrors[field] = error;
     } else {
-      delete newErrors[field as keyof AuthFormErrors];
+      delete newErrors[field];
+    }
+
+    if (field === "password" && repeatPassword) {
+      const confirmError = validateFieldValue(
+        "confirmPassword",
+        repeatPassword,
+        { password: value }
+      );
+      if (confirmError) {
+        newErrors.confirmPassword = confirmError;
+      } else {
+        delete newErrors.confirmPassword;
+      }
     }
 
     setErrors(newErrors);
@@ -65,14 +88,14 @@ export const SignInForm = ({
     if (!validateForm()) return;
 
     try {
-      await loginMutation.mutateAsync({
-        email,
-        password,
+      await resetPasswordMutation.mutateAsync({
+        token,
+        newPassword,
       });
       setErrors(undefined);
       onSuccess();
     } catch (error: unknown) {
-      const fallbackMessage = "Authentication failed. Please try again.";
+      const fallbackMessage = "Password reset failed. Please try again.";
       let errorMessage: string | undefined;
 
       if (error instanceof Error) {
@@ -83,19 +106,12 @@ export const SignInForm = ({
 
       if (!errorMessage) {
         setErrors((prev) => ({ ...prev, general: fallbackMessage }));
-      } else if (errorMessage.toLowerCase().includes("email")) {
-        setErrors((prev) => ({ ...prev, email: errorMessage }));
       } else if (errorMessage.toLowerCase().includes("password")) {
         setErrors((prev) => ({ ...prev, password: errorMessage }));
       } else {
         setErrors((prev) => ({ ...prev, general: errorMessage }));
       }
     }
-  };
-
-  const handleToggleAuthType = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    onToggleAuthType();
   };
 
   return (
@@ -107,23 +123,7 @@ export const SignInForm = ({
       )}
 
       <form className="auth-form" onSubmit={handleSubmit} noValidate>
-        <label className="auth-label">Email</label>
-        <div className="auth-input-wrapper">
-          <FaEnvelope className="auth-input-icon" />
-          <input
-            className={`auth-input ${errors?.email ? "auth-input-error" : ""}`}
-            type="email"
-            placeholder="Email Address"
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              validateField("email", e.target.value);
-            }}
-          />
-        </div>
-        {errors?.email && <p className="auth-error-text">{errors.email}</p>}
-
-        <label className="auth-label">Password</label>
+        <label className="auth-label">New Password</label>
         <div className="auth-input-wrapper">
           <FaLock className="auth-input-icon" />
           <input
@@ -131,10 +131,10 @@ export const SignInForm = ({
               errors?.password ? "auth-input-error" : ""
             }`}
             type={visibleFields.password ? "text" : "password"}
-            placeholder="Password"
-            value={password}
+            placeholder="New Password"
+            value={newPassword}
             onChange={(e) => {
-              setPassword(e.target.value);
+              setNewPassword(e.target.value);
               validateField("password", e.target.value);
             }}
           />
@@ -154,35 +154,45 @@ export const SignInForm = ({
           <p className="auth-error-text">{errors.password}</p>
         )}
 
-        {onForgotPassword && (
+        <label className="auth-label">Repeat Password</label>
+        <div className="auth-input-wrapper">
+          <FaLock className="auth-input-icon" />
+          <input
+            className={`auth-input ${
+              errors?.confirmPassword ? "auth-input-error" : ""
+            }`}
+            type={visibleFields.repeatPassword ? "text" : "password"}
+            placeholder="Repeat Password"
+            value={repeatPassword}
+            onChange={(e) => {
+              setRepeatPassword(e.target.value);
+              validateField("confirmPassword", e.target.value);
+            }}
+          />
           <button
             type="button"
-            className="auth-forgot-password-button"
-            onClick={onForgotPassword}
+            className="auth-toggle-password"
+            onClick={() => toggleVisibility("repeatPassword")}
           >
-            Forgot password?
+            {visibleFields.repeatPassword ? (
+              <EyeInvisibleOutlined />
+            ) : (
+              <EyeOutlined />
+            )}
           </button>
+        </div>
+        {errors?.confirmPassword && (
+          <p className="auth-error-text">{errors.confirmPassword}</p>
         )}
 
         <Button
           variant="primary"
-          label="Sign In"
+          label="Reset Password"
           className="auth-submit-button"
-          loading={loginMutation.isPending}
+          loading={resetPasswordMutation.isPending}
           loadingText="Processing..."
           type="submit"
         />
-
-        <div className="auth-change-type">
-          <p className="auth-change-type-text">Don't have an account yet? </p>
-          <a
-            href="#"
-            className="auth-change-type-link"
-            onClick={handleToggleAuthType}
-          >
-            Sign Up
-          </a>
-        </div>
       </form>
     </>
   );

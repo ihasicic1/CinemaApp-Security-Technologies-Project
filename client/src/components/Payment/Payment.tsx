@@ -12,13 +12,13 @@ const stripePromise = loadStripe(
   "pk_test_51RdRoPFTGQmTbzgKC4fAO0djKQaTzWLKnp2Ydc9IFpILMjHaSjCZOgtJxgnoKQlPlIfQGDhr23lHN2384fXzS7f900aKmjdGzu"
 );
 
-export type SelectedSeat = {
+type SelectedSeat = {
   seatCode: string;
   seatType: string;
   price: number;
 };
 
-export type BookingData = {
+type BookingData = {
   selectedSeats: SelectedSeat[];
   movie: Movie;
   screening: Screening;

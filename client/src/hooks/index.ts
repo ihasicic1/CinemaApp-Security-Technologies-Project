@@ -11,3 +11,5 @@ export * from "./useSimilarMovies";
 export * from "./useMovieRatings";
 export * from "./useScreenings";
 export * from "./useStripeCharge";
+export * from "./useResetPassword";
+export * from "./useForgotPassword";

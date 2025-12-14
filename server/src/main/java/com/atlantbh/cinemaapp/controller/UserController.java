@@ -2,20 +2,27 @@ package com.atlantbh.cinemaapp.controller;
 
 import com.atlantbh.cinemaapp.dto.projection.UserProjection;
 import com.atlantbh.cinemaapp.dto.request.AuthenticationRequestDto;
+import com.atlantbh.cinemaapp.dto.request.PasswordResetRequest;
 import com.atlantbh.cinemaapp.dto.request.RegistrationRequestDto;
+import com.atlantbh.cinemaapp.dto.request.ResetPasswordRequest;
 import com.atlantbh.cinemaapp.dto.response.AuthenticationResponseDto;
 import com.atlantbh.cinemaapp.dto.response.RegistrationResponseDto;
+import com.atlantbh.cinemaapp.entity.ResetToken;
+import com.atlantbh.cinemaapp.entity.User;
 import com.atlantbh.cinemaapp.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -64,5 +71,31 @@ public class UserController {
     public ResponseEntity<UserProjection> getUserProfile(final Authentication authentication) {
 
         return ResponseEntity.ok(userService.getProjectedUserByEmail(authentication.getName()));
+    }
+
+    @PostMapping("/auth/reset-password")
+    public ResponseEntity<String> requestReset(@RequestBody final PasswordResetRequest request) {
+        userService.processPasswordResetRequest(request.getEmail());
+        return ResponseEntity.ok("If the email is registered, you'll get a reset link");
+    }
+
+    @GetMapping("/auth/reset-password")
+    public ResponseEntity<String> validateToken(@RequestParam("token") final String token) {
+        try {
+            final String result = userService.validateToken(token);
+            return ResponseEntity.ok(result);
+        } catch (final IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/auth/reset-password/confirm")
+    public ResponseEntity<String> resetPassword(@RequestBody final ResetPasswordRequest request) {
+        try {
+            userService.resetPassword(request.getToken(), request.getNewPassword());
+            return ResponseEntity.ok("Password updated");
+        } catch (final IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

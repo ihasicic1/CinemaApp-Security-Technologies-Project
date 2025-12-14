@@ -10,6 +10,7 @@ import {
   MovieDetails,
   Pricing,
   UpcomingMovies,
+  ResetPassword,
 } from "./pages";
 import { AuthProvider } from "./contexts";
 
@@ -61,6 +62,7 @@ const App = () => {
                   element={<SeatOptions />}
                 />
                 <Route path="/payment/:screeningId" element={<Payment />} />
+                <Route path="/reset-password" element={<div />} />
               </Routes>
               <Footer />
             </Router>

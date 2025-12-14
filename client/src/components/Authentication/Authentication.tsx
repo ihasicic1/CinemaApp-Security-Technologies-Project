@@ -4,6 +4,9 @@ import { useState, useEffect } from "react";
 import { SuccessScreen } from "../SuccessScreen";
 import { SignInForm } from "../SignInForm";
 import { SignUpForm } from "../SignUpForm";
+import { ForgotPasswordForm } from "../ForgotPasswordForm";
+import { ResetPasswordForm } from "../ResetPasswordForm";
+
 import logo from "../../assets/img/Logo.png";
 
 import "./authentication.scss";
@@ -11,23 +14,37 @@ import "./authentication.scss";
 export type AuthenticationProps = {
   isOpen: boolean;
   onClose: () => void;
+  resetToken?: string;
 };
 
-export const Authentication = ({ isOpen, onClose }: AuthenticationProps) => {
-  const [isSignUp, setIsSignUp] = useState<boolean>(false);
-  const [isSuccessScreenVisible, setIsSuccessScreenVisible] =
-    useState<boolean>(false);
+export const Authentication = ({
+  isOpen,
+  onClose,
+  resetToken,
+  children,
+}: AuthenticationProps & { children?: React.ReactNode }) => {
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [isSuccessScreenVisible, setIsSuccessScreenVisible] = useState(false);
 
   useEffect(() => {
-    if (isOpen) {
-      setIsSuccessScreenVisible(false);
+    if (!isOpen) return;
+
+    if (resetToken) {
       setIsSignUp(false);
+      setIsForgotPassword(false);
+      setIsSuccessScreenVisible(false);
+    } else {
+      setIsSignUp(false);
+      setIsForgotPassword(false);
+      setIsSuccessScreenVisible(false);
     }
-  }, [isOpen]);
+  }, [isOpen, resetToken]);
 
   const resetForm = () => {
     setIsSuccessScreenVisible(false);
     setIsSignUp(false);
+    setIsForgotPassword(false);
   };
 
   const handleAuthSuccess = () => {
@@ -39,7 +56,11 @@ export const Authentication = ({ isOpen, onClose }: AuthenticationProps) => {
     setIsSuccessScreenVisible(false);
   };
 
-  const successScreenType = isSignUp ? "signUp" : "signIn";
+  const successScreenType = isSignUp
+    ? "signUp"
+    : resetToken
+    ? "resetPassword"
+    : "signIn";
 
   return (
     <Drawer
@@ -62,18 +83,32 @@ export const Authentication = ({ isOpen, onClose }: AuthenticationProps) => {
           <div className="auth-content">
             <img src={logo} alt="Logo" className="auth-logo-icon" />
             <h5 className="auth-title">
-              {isSignUp ? "Hello" : "Welcome Back"}
+              {resetToken
+                ? "Reset Password"
+                : isSignUp
+                ? "Hello"
+                : isForgotPassword
+                ? "Forgot Password"
+                : "Welcome Back"}
             </h5>
 
-            {isSignUp ? (
+            {resetToken ? (
+              <ResetPasswordForm
+                token={resetToken}
+                onSuccess={handleAuthSuccess}
+              />
+            ) : isSignUp ? (
               <SignUpForm
                 onSuccess={handleAuthSuccess}
                 onToggleAuthType={() => setIsSignUp(false)}
               />
+            ) : isForgotPassword ? (
+              <ForgotPasswordForm />
             ) : (
               <SignInForm
                 onSuccess={handleAuthSuccess}
                 onToggleAuthType={() => setIsSignUp(true)}
+                onForgotPassword={() => setIsForgotPassword(true)}
               />
             )}
           </div>
