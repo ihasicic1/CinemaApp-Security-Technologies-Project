@@ -69,6 +69,7 @@ CinemaApp is a web-based ticketing platform designed for a movie company with mu
    DB_PASSWORD=your_database_password
    DB_URL=your_database_url_and_name
    OMDB_API_KEY=your_omdb_api_key
+   SSL_KEYSTORE_PASSWORD=your_ssl_keystore_password
    ```
 
    > **To obtain an OMDb API Key**:
@@ -115,7 +116,7 @@ CinemaApp is a web-based ticketing platform designed for a movie company with mu
    You can refer to the `.env.example` file in the frontend project root directory. Copy its contents into a new `.env` file and update the values accordingly:
 
    ```env
-   VITE_API_BASE_URL=http://localhost:8080
+   VITE_API_BASE_URL=https://localhost:8443/api
    ```
 
 3. Install dependencies:
