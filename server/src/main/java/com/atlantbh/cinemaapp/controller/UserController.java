@@ -3,17 +3,17 @@ package com.atlantbh.cinemaapp.controller;
 import com.atlantbh.cinemaapp.dto.projection.UserProjection;
 import com.atlantbh.cinemaapp.dto.request.AuthenticationRequestDto;
 import com.atlantbh.cinemaapp.dto.request.RegistrationRequestDto;
+import com.atlantbh.cinemaapp.dto.request.UserRequest;
 import com.atlantbh.cinemaapp.dto.response.AuthenticationResponseDto;
 import com.atlantbh.cinemaapp.dto.response.RegistrationResponseDto;
+import com.atlantbh.cinemaapp.dto.response.UserResponse;
 import com.atlantbh.cinemaapp.service.UserService;
+import com.atlantbh.cinemaapp.util.Pagination;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 import java.util.UUID;
@@ -64,5 +64,27 @@ public class UserController {
     public ResponseEntity<UserProjection> getUserProfile(final Authentication authentication) {
 
         return ResponseEntity.ok(userService.getProjectedUserByEmail(authentication.getName()));
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<Page<UserResponse>> getAllUsers(
+            @ModelAttribute Pagination pagination
+    ) {
+        return ResponseEntity.ok(
+                userService.getAllUsers(pagination.toPageable())
+        );
+    }
+
+    @PostMapping("/users")
+    public ResponseEntity<UserResponse> createUser(
+            @RequestBody @Valid UserRequest request
+    ) {
+        return ResponseEntity.ok(userService.createUser(request));
+    }
+
+    @DeleteMapping("/users/{userId}")
+    public ResponseEntity<Void> deleteUser(@PathVariable UUID userId) {
+        userService.deleteUser(userId);
+        return ResponseEntity.noContent().build();
     }
 }
