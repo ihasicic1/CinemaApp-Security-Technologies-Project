@@ -7,7 +7,6 @@ import ApartmentIcon from "@mui/icons-material/Apartment";
 export default function AdminSidebar() {
   return (
     <aside className="admin-sidebar">
-      {/* ✅ HEADER */}
       <div className="sidebar-header">
         <div className="sidebar-icon-wrapper">
           <span className="sidebar-logo">🎬</span>
@@ -16,7 +15,6 @@ export default function AdminSidebar() {
         <div className="sidebar-title">Cinebh Admin</div>
       </div>
 
-      {/* ✅ NAVIGATION */}
      <nav className="sidebar-nav">
   <NavLink
     to="/admin/users"

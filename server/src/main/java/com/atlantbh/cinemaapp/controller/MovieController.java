@@ -1,6 +1,8 @@
 package com.atlantbh.cinemaapp.controller;
 
 import com.atlantbh.cinemaapp.dto.MovieRating;
+import com.atlantbh.cinemaapp.dto.request.MovieRequest;
+import com.atlantbh.cinemaapp.dto.response.MovieResponse;
 import com.atlantbh.cinemaapp.entity.Movie;
 import com.atlantbh.cinemaapp.entity.Screening;
 import com.atlantbh.cinemaapp.service.MovieService;
@@ -9,12 +11,7 @@ import com.atlantbh.cinemaapp.util.Pagination;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -89,5 +86,29 @@ public class MovieController {
     @GetMapping("/movies/{movieId}/screenings")
     public ResponseEntity<List<Screening>> getScreeningsByMovieId(@PathVariable final UUID movieId) {
         return ResponseEntity.ok(screeningService.getScreeningsByMovieId(movieId));
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<Movie>> getAllMovies(@ModelAttribute final Pagination pagination) {
+        return ResponseEntity.ok(movieService.getAllMovies(pagination.toPageable()));
+    }
+
+    @PostMapping
+    public ResponseEntity<MovieResponse> createMovie(@RequestBody MovieRequest request) {
+        return ResponseEntity.ok(movieService.createMovie(request));
+    }
+
+    @PutMapping("/{movieId}")
+    public ResponseEntity<MovieResponse> updateMovie(
+            @PathVariable UUID movieId,
+            @RequestBody MovieRequest request
+    ) {
+        return ResponseEntity.ok(movieService.updateMovie(movieId, request));
+    }
+
+    @DeleteMapping("/{movieId}")
+    public ResponseEntity<Void> deleteMovie(@PathVariable UUID movieId) {
+        movieService.deleteMovie(movieId);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -185,4 +185,28 @@ public class Movie {
     public List<Role> getRoles() {
         return roles;
     }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setDuration(Integer duration) {
+        this.duration = duration;
+    }
+
+    public void setPgRating(PgRating pgRating) {
+        this.pgRating = pgRating;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public void setDirector(String director) {
+        this.director = director;
+    }
+
+    public void setTrailerUrl(String trailerUrl) {
+        this.trailerUrl = trailerUrl;
+    }
 }

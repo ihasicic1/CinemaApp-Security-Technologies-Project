@@ -103,7 +103,6 @@ export default function UsersAdmin() {
         boxShadow: "0 8px 25px rgba(0,0,0,0.06)"
       }}
     >
-      {/* HEADER */}
       <div
         style={{
           display: "flex",
@@ -124,10 +123,8 @@ export default function UsersAdmin() {
         />
       </div>
 
-      {/* TABLE */}
       <Table columns={columns} dataSource={pagedUsers} rowKey="id" pagination={false} />
 
-      {/* PAGINATION */}
       <div style={{ marginTop: 20 }}>
         <CompactPagination
           currentPage={currentPage}
@@ -137,7 +134,6 @@ export default function UsersAdmin() {
         />
       </div>
 
-      {/* ADD USER MODAL */}
       <Modal
         title="Add User"
         open={open}
@@ -172,7 +168,6 @@ export default function UsersAdmin() {
         </Form>
       </Modal>
 
-      {/* DELETE CONFIRM MODAL */}
       <ConfirmModal
         open={deleteOpen}
         title="Delete User"
