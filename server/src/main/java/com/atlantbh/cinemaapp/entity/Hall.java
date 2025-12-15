@@ -35,7 +35,11 @@ public class Hall {
     @JoinColumn(name = "venue_id", nullable = false)
     private Venue venue;
 
-    @OneToMany(mappedBy = "hall")
+    @OneToMany(
+            mappedBy = "hall",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     @JsonIgnore
     private Set<Screening> screenings;
 
