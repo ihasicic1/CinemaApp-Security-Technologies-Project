@@ -17,10 +17,8 @@ export default function UsersAdmin() {
   const [open, setOpen] = useState(false);
   const [form] = Form.useForm();
 
-  // Pagination
   const [currentPage, setCurrentPage] = useState(0);
 
-  // DELETE MODAL STATE
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
 
@@ -31,7 +29,6 @@ export default function UsersAdmin() {
       .catch(() => setUsers([]));
   }, []);
 
-  // CREATE USER
   const handleCreateUser = async () => {
     try {
       const values = await form.validateFields();
@@ -47,7 +44,6 @@ export default function UsersAdmin() {
     } catch {}
   };
 
-  // OPEN DELETE MODAL
   const handleDelete = (id: number) => {
     const user = users.find((u) => u.id === id);
     if (!user) return;
@@ -56,7 +52,6 @@ export default function UsersAdmin() {
     setDeleteOpen(true);
   };
 
-  // CONFIRM DELETE
   const confirmDelete = () => {
     if (!userToDelete) return;
 
@@ -65,13 +60,11 @@ export default function UsersAdmin() {
     setUserToDelete(null);
   };
 
-  // CANCEL DELETE
   const cancelDelete = () => {
     setDeleteOpen(false);
     setUserToDelete(null);
   };
 
-  // TABLE COLUMNS
   const columns = [
     { title: "ID", dataIndex: "id" },
     { title: "Email", dataIndex: "email" },
@@ -87,7 +80,6 @@ export default function UsersAdmin() {
     },
   ];
 
-  // PAGED DATA
   const pagedUsers = useMemo(() => {
     const start = currentPage * PAGE_SIZE;
     const end = start + PAGE_SIZE;

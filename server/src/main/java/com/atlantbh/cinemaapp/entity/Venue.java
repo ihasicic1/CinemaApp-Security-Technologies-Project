@@ -1,15 +1,7 @@
 package com.atlantbh.cinemaapp.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -47,9 +39,14 @@ public class Venue {
     @JoinColumn(name = "location_id")
     private Location location;
 
-    @OneToMany(mappedBy = "venue")
+    @OneToMany(
+            mappedBy = "venue",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     @JsonIgnore
     private List<Hall> halls;
+
 
     public Venue() {}
 
@@ -101,5 +98,21 @@ public class Venue {
 
     public List<Hall> getHalls() {
         return halls;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setStreet(String street) {
+        this.street = street;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
     }
 }

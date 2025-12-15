@@ -182,3 +182,10 @@ export type MovieListItem = {
   director: string;
   trailerUrl: string;
 };
+
+export type VenueRequest = {
+  name: string;
+  street: string;
+  imageUrl: string;
+  locationId: string;
+};
