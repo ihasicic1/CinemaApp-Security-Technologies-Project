@@ -180,7 +180,6 @@ export default function VenuesAdmin() {
         boxShadow: "0 8px 25px rgba(0,0,0,0.06)",
       }}
     >
-      {/* ✅ HEADER */}
       <div
         style={{
           display: "flex",
@@ -201,7 +200,6 @@ export default function VenuesAdmin() {
         />
       </div>
 
-      {/* ✅ TABLE */}
       <Table
         columns={columns}
         dataSource={pagedVenues}
@@ -209,7 +207,6 @@ export default function VenuesAdmin() {
         pagination={false}
       />
 
-      {/* ✅ PAGINATION */}
       <div style={{ marginTop: 20 }}>
         <CompactPagination
           currentPage={currentPage}
@@ -219,7 +216,6 @@ export default function VenuesAdmin() {
         />
       </div>
 
-      {/* ✅ ADD VENUE MODAL */}
       <Modal
         title="Add Venue"
         open={openAdd}
@@ -263,7 +259,6 @@ export default function VenuesAdmin() {
         </Form>
       </Modal>
 
-      {/* ✅ EDIT VENUE MODAL */}
       <Modal
         title="Edit Venue"
         open={openEdit}
@@ -307,7 +302,6 @@ export default function VenuesAdmin() {
         </Form>
       </Modal>
 
-      {/* ✅ DELETE CONFIRM MODAL */}
       <ConfirmModal
         open={deleteOpen}
         title="Delete Venue"

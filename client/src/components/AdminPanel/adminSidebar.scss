@@ -8,7 +8,6 @@
   box-shadow: 4px 0 18px rgba(0, 0, 0, 0.25);
 }
 
-/* ✅ HEADER */
 .sidebar-header {
   display: flex;
   flex-direction: column;
@@ -46,7 +45,6 @@
   margin-top: 6px;
 }
 
-/* ✅ NAV */
 .sidebar-nav {
   display: flex;
   flex-direction: column;
@@ -67,14 +65,12 @@
   transition: all 0.25s ease;
 }
 
-/* ✅ HOVER */
 .sidebar-link:hover {
   background: rgba(255, 255, 255, 0.08);
   color: white;
   transform: translateX(4px);
 }
 
-/* ✅ ACTIVE */
 .sidebar-link.active {
   background: linear-gradient(90deg, #dc2626, #b91c1c);
   color: white;

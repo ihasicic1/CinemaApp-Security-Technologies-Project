@@ -2,6 +2,7 @@ package com.atlantbh.cinemaapp.service;
 
 import com.atlantbh.cinemaapp.dto.MovieRating;
 import com.atlantbh.cinemaapp.entity.Movie;
+import com.atlantbh.cinemaapp.mapper.MovieMapper;
 import com.atlantbh.cinemaapp.repository.MovieRepository;
 import com.atlantbh.cinemaapp.specification.MovieSpecification;
 import jakarta.persistence.EntityNotFoundException;
@@ -13,6 +14,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import com.atlantbh.cinemaapp.dto.request.MovieRequest;
+import com.atlantbh.cinemaapp.dto.response.MovieResponse;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -28,13 +31,16 @@ public class MovieService {
     private final MovieRepository movieRepository;
     private final RestTemplate restTemplate;
     private final String omdbApiKey;
+    private final MovieMapper movieMapper;
 
     public MovieService(final MovieRepository movieRepository,
                         final RestTemplate restTemplate,
-                        @Value("${omdb.api.key}") final String omdbApiKey) {
+                        @Value("${omdb.api.key}") final String omdbApiKey,
+                        final MovieMapper movieMapper) {
         this.movieRepository = movieRepository;
         this.restTemplate = restTemplate;
         this.omdbApiKey = omdbApiKey;
+        this.movieMapper = movieMapper;
     }
 
     public Movie getMovieById(final UUID movieId) {
@@ -128,5 +134,26 @@ public class MovieService {
         }
 
         return ratings;
+    }
+
+    public Page<Movie> getAllMovies(final Pageable pageable) {
+        return movieRepository.findAll(pageable);
+    }
+
+    public MovieResponse createMovie(MovieRequest request) {
+        Movie movie = movieMapper.dtoToEntity(request);
+        return movieMapper.entityToDto(movieRepository.save(movie));
+    }
+
+    public MovieResponse updateMovie(UUID movieId, MovieRequest request) {
+        Movie movie = movieRepository.findById(movieId)
+                .orElseThrow(() -> new EntityNotFoundException("Movie not found"));
+
+        movieMapper.updateEntity(movie, request);
+        return movieMapper.entityToDto(movieRepository.save(movie));
+    }
+
+    public void deleteMovie(UUID movieId) {
+        movieRepository.deleteById(movieId);
     }
 }

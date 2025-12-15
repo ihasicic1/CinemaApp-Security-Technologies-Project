@@ -1,134 +1,125 @@
-import { useEffect, useMemo, useState } from "react";
-import { Modal, Table, Form, Input } from "antd";
-import axios from "axios";
+import { useEffect, useState } from "react";
+import { Modal, Table, Form, Input, Select } from "antd";
 import { Button } from "../../components/Button";
 import { CompactPagination } from "../../components/CompactPagination";
 import { ConfirmModal } from "../../components/ConfirmModal";
+import { Pageable } from "../../utils";
+import { getAdminMovies, createMovie, updateMovie, deleteMovie } from "../../api/movies";
+import { PGRating, type MovieListItem } from "../../api/types";
 
-interface Movie {
-  id: number;
-  title: string;
-  duration: number;
-  pg_rating: string;
-  language: string;
-  director: string;
-}
-
-const PAGE_SIZE = 8;
+const PAGE_SIZE = 5;
 
 export default function MoviesAdmin() {
-  const [movies, setMovies] = useState<Movie[]>([]);
+  const [movies, setMovies] = useState<MovieListItem[]>([]);
+  const [totalElements, setTotalElements] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
+
   const [openAdd, setOpenAdd] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+
+  const [movieToEdit, setMovieToEdit] = useState<MovieListItem | null>(null);
+  const [movieToDelete, setMovieToDelete] = useState<MovieListItem | null>(null);
+
   const [form] = Form.useForm();
   const [editForm] = Form.useForm();
 
-  const [currentPage, setCurrentPage] = useState(0);
+  const fetchMovies = async (page = currentPage) => {
+    const pageable: Pageable = { page, size: PAGE_SIZE };
+    const data = await getAdminMovies(pageable);
+    setMovies(data.content);
+    setTotalElements(data.page.totalElements);
+  };
 
-  const [deleteOpen, setDeleteOpen] = useState(false);
-  const [movieToDelete, setMovieToDelete] = useState<Movie | null>(null);
-
-  const [movieToEdit, setMovieToEdit] = useState<Movie | null>(null);
-
-  // FETCH MOVIES
   useEffect(() => {
-    axios
-      .get(`${import.meta.env.VITE_API_BASE_URL}/movies`)
-      .then((res) => setMovies(res.data))
-      .catch(() => setMovies([]));
-  }, []);
+    fetchMovies();
+  }, [currentPage]);
 
-  // CREATE MOVIE
   const handleCreateMovie = async () => {
     try {
       const values = await form.validateFields();
 
-      const newMovie: Movie = {
-        id: Date.now(),
+      await createMovie({
         title: values.title,
         duration: values.duration,
-        pg_rating: values.pg_rating,
+        pgRating: values.pgRating,
         language: values.language,
         director: values.director,
-      };
+        trailerUrl: values.trailerUrl,
+      });
 
-      setMovies((prev) => [...prev, newMovie]);
       setOpenAdd(false);
       form.resetFields();
+
+      const lastPage = Math.ceil((totalElements + 1) / PAGE_SIZE) - 1;
+      setCurrentPage(lastPage);
     } catch {}
   };
 
-  // OPEN EDIT
-  const handleEdit = (movie: Movie) => {
+  const handleEdit = (movie: MovieListItem) => {
     setMovieToEdit(movie);
-
-    // Pre-fill form
-    editForm.setFieldsValue({
-      title: movie.title,
-      duration: movie.duration,
-      pg_rating: movie.pg_rating,
-      language: movie.language,
-      director: movie.director,
-    });
-
+    editForm.setFieldsValue(movie);
     setOpenEdit(true);
   };
 
-  // SAVE EDIT
   const handleSaveEdit = async () => {
     try {
       const values = await editForm.validateFields();
 
-      const updatedMovie: Movie = {
-        ...movieToEdit!,
-        ...values,
-      };
-
-      setMovies((prev) =>
-        prev.map((m) => (m.id === updatedMovie.id ? updatedMovie : m))
-      );
+      await updateMovie(movieToEdit!.id, values);
 
       setOpenEdit(false);
       setMovieToEdit(null);
+
+      fetchMovies();
     } catch {}
   };
 
-  // OPEN DELETE MODAL
-  const handleDeleteOpen = (movie: Movie) => {
+  const handleDeleteOpen = (movie: MovieListItem) => {
     setMovieToDelete(movie);
     setDeleteOpen(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (!movieToDelete) return;
 
-    setMovies((prev) => prev.filter((m) => m.id !== movieToDelete.id));
+    await deleteMovie(movieToDelete.id);
+
+    const isLastItemOnPage = movies.length === 1 && currentPage > 0;
     setDeleteOpen(false);
     setMovieToDelete(null);
+
+    if (isLastItemOnPage) {
+      setCurrentPage((p) => p - 1);
+    } else {
+      fetchMovies();
+    }
   };
 
-  const cancelDelete = () => {
-    setDeleteOpen(false);
-    setMovieToDelete(null);
-  };
-
-  // TABLE COLUMNS
   const columns = [
-    { title: "ID", dataIndex: "id" },
     { title: "Title", dataIndex: "title" },
     { title: "Duration (min)", dataIndex: "duration" },
-    { title: "PG Rating", dataIndex: "pg_rating" },
+    {
+      title: "PG Rating",
+      dataIndex: "pgRating",
+      render: (value: PGRating) => value,
+    },
     { title: "Language", dataIndex: "language" },
     { title: "Director", dataIndex: "director" },
     {
+      title: "Trailer",
+      dataIndex: "trailerUrl",
+      render: (url: string) => (
+        <a href={url} target="_blank" rel="noopener noreferrer">
+          Open
+        </a>
+      ),
+    },
+    {
       title: "Actions",
-      render: (_: any, record: Movie) => (
+      render: (_: any, record: MovieListItem) => (
         <div style={{ display: "flex", gap: 10 }}>
-          <Button
-            variant="primary"
-            label="Edit"
-            onClick={() => handleEdit(record)}
-          />
+          <Button variant="primary" label="Edit" onClick={() => handleEdit(record)} />
           <Button
             variant="secondary"
             label="Delete"
@@ -139,11 +130,10 @@ export default function MoviesAdmin() {
     },
   ];
 
-  const pagedMovies = useMemo(() => {
-    const start = currentPage * PAGE_SIZE;
-    const end = start + PAGE_SIZE;
-    return movies.slice(start, end);
-  }, [movies, currentPage]);
+  const pgOptions = Object.values(PGRating).map((v) => ({
+    label: v,
+    value: v,
+  }));
 
   return (
     <div
@@ -154,7 +144,6 @@ export default function MoviesAdmin() {
         boxShadow: "0 8px 25px rgba(0,0,0,0.06)",
       }}
     >
-      {/* HEADER */}
       <div
         style={{
           display: "flex",
@@ -164,7 +153,6 @@ export default function MoviesAdmin() {
         }}
       >
         <h1 style={{ margin: 0, fontSize: 30 }}>Movies</h1>
-
         <Button
           variant="primary"
           label="+ Add Movie"
@@ -175,138 +163,49 @@ export default function MoviesAdmin() {
         />
       </div>
 
-      {/* TABLE */}
-      <Table
-        columns={columns}
-        dataSource={pagedMovies}
-        rowKey="id"
-        pagination={false}
-      />
+      <Table columns={columns} dataSource={movies} rowKey="id" pagination={false} />
 
-      {/* PAGINATION */}
       <div style={{ marginTop: 20 }}>
         <CompactPagination
           currentPage={currentPage}
-          totalElements={movies.length}
+          totalElements={totalElements}
           pageSize={PAGE_SIZE}
           onPageChange={setCurrentPage}
         />
       </div>
 
-      {/* ADD MOVIE MODAL */}
-      <Modal
-        title="Add Movie"
-        open={openAdd}
-        onCancel={() => setOpenAdd(false)}
-        footer={null}
-        destroyOnClose
-      >
+      <Modal title="Add Movie" open={openAdd} footer={null} onCancel={() => setOpenAdd(false)}>
         <Form layout="vertical" form={form}>
-          <Form.Item label="Title" name="title" rules={[{ required: true }]}>
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            label="Duration (min)"
-            name="duration"
-            rules={[{ required: true }]}
-          >
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item
-            label="PG Rating"
-            name="pg_rating"
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            label="Language"
-            name="language"
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            label="Director"
-            name="director"
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
+          <Form.Item label="Title" name="title" rules={[{ required: true }]}><Input /></Form.Item>
+          <Form.Item label="Duration (min)" name="duration" rules={[{ required: true }]}><Input type="number" /></Form.Item>
+          <Form.Item label="PG Rating" name="pgRating" rules={[{ required: true }]}><Select options={pgOptions} /></Form.Item>
+          <Form.Item label="Language" name="language" rules={[{ required: true }]}><Input /></Form.Item>
+          <Form.Item label="Director" name="director" rules={[{ required: true }]}><Input /></Form.Item>
+          <Form.Item label="Trailer URL" name="trailerUrl" rules={[{ required: true }, { type: "url" }]}><Input /></Form.Item>
 
           <div style={{ display: "flex", justifyContent: "flex-end", gap: 12 }}>
-            <Button
-              variant="secondary"
-              label="Cancel"
-              onClick={() => setOpenAdd(false)}
-            />
+            <Button variant="secondary" label="Cancel" onClick={() => setOpenAdd(false)} />
             <Button variant="primary" label="Create" onClick={handleCreateMovie} />
           </div>
         </Form>
       </Modal>
 
-      {/* EDIT MOVIE MODAL */}
-      <Modal
-        title="Edit Movie"
-        open={openEdit}
-        onCancel={() => setOpenEdit(false)}
-        footer={null}
-        destroyOnClose
-      >
+      <Modal title="Edit Movie" open={openEdit} footer={null} onCancel={() => setOpenEdit(false)}>
         <Form layout="vertical" form={editForm}>
-          <Form.Item label="Title" name="title" rules={[{ required: true }]}>
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            label="Duration (min)"
-            name="duration"
-            rules={[{ required: true }]}
-          >
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item
-            label="PG Rating"
-            name="pg_rating"
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            label="Language"
-            name="language"
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            label="Director"
-            name="director"
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
+          <Form.Item label="Title" name="title" rules={[{ required: true }]}><Input /></Form.Item>
+          <Form.Item label="Duration (min)" name="duration" rules={[{ required: true }]}><Input type="number" /></Form.Item>
+          <Form.Item label="PG Rating" name="pgRating" rules={[{ required: true }]}><Select options={pgOptions} /></Form.Item>
+          <Form.Item label="Language" name="language" rules={[{ required: true }]}><Input /></Form.Item>
+          <Form.Item label="Director" name="director" rules={[{ required: true }]}><Input /></Form.Item>
+          <Form.Item label="Trailer URL" name="trailerUrl" rules={[{ required: true }, { type: "url" }]}><Input /></Form.Item>
 
           <div style={{ display: "flex", justifyContent: "flex-end", gap: 12 }}>
-            <Button
-              variant="secondary"
-              label="Cancel"
-              onClick={() => setOpenEdit(false)}
-            />
-
+            <Button variant="secondary" label="Cancel" onClick={() => setOpenEdit(false)} />
             <Button variant="primary" label="Save Changes" onClick={handleSaveEdit} />
           </div>
         </Form>
       </Modal>
 
-      {/* DELETE CONFIRM MODAL */}
       <ConfirmModal
         open={deleteOpen}
         title="Delete Movie"
@@ -314,7 +213,7 @@ export default function MoviesAdmin() {
         confirmText="Delete"
         cancelText="Cancel"
         onConfirm={confirmDelete}
-        onCancel={cancelDelete}
+        onCancel={() => setDeleteOpen(false)}
       />
     </div>
   );
