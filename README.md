@@ -69,8 +69,24 @@ CinemaApp is a web-based ticketing platform designed for a movie company with mu
    DB_PASSWORD=your_database_password
    DB_URL=your_database_url_and_name
    OMDB_API_KEY=your_omdb_api_key
+   SMTP_HOST=your_email_provider_host (e.g. smtp.gmail.com in case of gmail)
+   SMTP_PORT=your_email_provider_port (e.g. 587 in case of gmail)
+   EMAIL_USERNAME=your_email_address (e.g. user@example.com)
+   EMAIL_PASSWORD=your_email_password 
+   FRONTEND_URL=https://localhost:5173 (in case of running locally)
    SSL_KEYSTORE_PASSWORD=your_ssl_keystore_password
    ```
+
+> **In case of opting for gmail as your email provider**:
+   >
+   > - Go to Google Account Security
+   > - Enable 2-Step Verification if you haven’t already.
+   > - Under “Signing in to Google”, click App passwords.
+   > - Select -> App -> Mail -> Device -> Other (give a name like “Spring Boot App”)
+   > - Click Generate → Google gives you a 16-character password. Example: abcd efgh ijkl mnop
+   > - Use this app password as EMAIL_PASSWORD in your Spring Boot config.
+   > - Your EMAIL_USERNAME is still your Gmail address (example@gmail.com). 
+ 
 
    > **To obtain an OMDb API Key**:
    >
@@ -91,7 +107,11 @@ CinemaApp is a web-based ticketing platform designed for a movie company with mu
    - A private key file: `src/main/resources/jwt/app.key`
    - A public key file: `src/main/resources/jwt/app.pub`
 
-5. Build and run the Spring Boot application:
+5. Generate Stripe API key
+
+   - Visit https://docs.stripe.com/keys
+
+7. Build and run the Spring Boot application:
 
    ```bash
    cd server
