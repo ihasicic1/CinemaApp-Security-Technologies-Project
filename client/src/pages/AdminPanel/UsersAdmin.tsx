@@ -1,90 +1,92 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Modal, Table, Form, Input } from "antd";
-import axios from "axios";
 import { Button } from "../../components/Button";
 import { CompactPagination } from "../../components/CompactPagination";
 import { ConfirmModal } from "../../components/ConfirmModal";
+import { Pageable } from "../../utils";
 
-interface User {
-  id: number;
-  email: string;
-}
+import { getUsers, createUser, deleteUser } from "../../api/users";
+import type { User } from "../../api/users";
 
-const PAGE_SIZE = 8;
+const PAGE_SIZE = 5;
 
 export default function UsersAdmin() {
   const [users, setUsers] = useState<User[]>([]);
-  const [open, setOpen] = useState(false);
-  const [form] = Form.useForm();
-
+  const [totalElements, setTotalElements] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
 
+  const [openAdd, setOpenAdd] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
 
+  const [form] = Form.useForm();
+
+  const fetchUsers = async (page = currentPage) => {
+    const pageable: Pageable = { page, size: PAGE_SIZE };
+    const data = await getUsers(pageable);
+
+    setUsers(data.content);
+    setTotalElements(data.page.totalElements);
+  };
+
   useEffect(() => {
-    axios
-      .get(`${import.meta.env.VITE_API_BASE_URL}/users`)
-      .then((res) => setUsers(res.data))
-      .catch(() => setUsers([]));
-  }, []);
+    fetchUsers();
+  }, [currentPage]);
 
   const handleCreateUser = async () => {
     try {
       const values = await form.validateFields();
 
-      const newUser: User = {
-        id: Date.now(),
+      await createUser({
         email: values.email,
-      };
+        password: values.password,
+      });
 
-      setUsers((prev) => [...prev, newUser]);
-      setOpen(false);
+      setOpenAdd(false);
       form.resetFields();
+
+      const lastPage = Math.ceil((totalElements + 1) / PAGE_SIZE) - 1;
+
+      setCurrentPage(lastPage);
+      fetchUsers(lastPage);
     } catch {}
   };
 
-  const handleDelete = (id: number) => {
-    const user = users.find((u) => u.id === id);
-    if (!user) return;
-
-    setUserToDelete(user);
-    setDeleteOpen(true);
-  };
-
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (!userToDelete) return;
 
-    setUsers((prev) => prev.filter((u) => u.id !== userToDelete.id));
-    setDeleteOpen(false);
-    setUserToDelete(null);
-  };
+    await deleteUser(userToDelete.id);
 
-  const cancelDelete = () => {
+    const isLastItemOnPage = users.length === 1 && currentPage > 0;
+
     setDeleteOpen(false);
     setUserToDelete(null);
+
+    if (isLastItemOnPage) {
+      setCurrentPage((p) => p - 1);
+    } else {
+      fetchUsers();
+    }
   };
 
   const columns = [
-    { title: "ID", dataIndex: "id" },
     { title: "Email", dataIndex: "email" },
+    { title: "Created At", dataIndex: "createdAt" },
     {
       title: "Actions",
       render: (_: any, record: User) => (
         <Button
           variant="secondary"
           label="Delete"
-          onClick={() => handleDelete(record.id)}
+          onClick={() => {
+            setUserToDelete(record);
+            setDeleteOpen(true);
+          }}
         />
       ),
     },
   ];
-
-  const pagedUsers = useMemo(() => {
-    const start = currentPage * PAGE_SIZE;
-    const end = start + PAGE_SIZE;
-    return users.slice(start, end);
-  }, [users, currentPage]);
 
   return (
     <div
@@ -92,7 +94,7 @@ export default function UsersAdmin() {
         background: "white",
         borderRadius: 14,
         padding: 32,
-        boxShadow: "0 8px 25px rgba(0,0,0,0.06)"
+        boxShadow: "0 8px 25px rgba(0,0,0,0.06)",
       }}
     >
       <div
@@ -110,17 +112,22 @@ export default function UsersAdmin() {
           label="+ Add User"
           onClick={() => {
             form.resetFields();
-            setOpen(true);
+            setOpenAdd(true);
           }}
         />
       </div>
 
-      <Table columns={columns} dataSource={pagedUsers} rowKey="id" pagination={false} />
+      <Table
+        columns={columns}
+        dataSource={users}
+        rowKey="id"
+        pagination={false}
+      />
 
       <div style={{ marginTop: 20 }}>
         <CompactPagination
           currentPage={currentPage}
-          totalElements={users.length}
+          totalElements={totalElements}
           pageSize={PAGE_SIZE}
           onPageChange={setCurrentPage}
         />
@@ -128,34 +135,39 @@ export default function UsersAdmin() {
 
       <Modal
         title="Add User"
-        open={open}
-        onCancel={() => {
-          setOpen(false);
-          form.resetFields();
-        }}
+        open={openAdd}
         footer={null}
+        onCancel={() => setOpenAdd(false)}
         destroyOnClose
       >
         <Form layout="vertical" form={form}>
-          <Form.Item label="Email" name="email" rules={[{ required: true, message: "Please enter Email" }]}>
-            <Input placeholder="Enter email" />
+          <Form.Item
+            label="Email"
+            name="email"
+            rules={[{ required: true, type: "email" }]}
+          >
+            <Input />
           </Form.Item>
 
-          <Form.Item label="Password" name="password" rules={[{ required: true, message: "Please enter Password" }]}>
-            <Input.Password placeholder="Enter password" />
+          <Form.Item
+            label="Password"
+            name="password"
+            rules={[{ required: true }]}
+          >
+            <Input.Password />
           </Form.Item>
 
-          <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 20, gap: 12 }}>
+          <div style={{ display: "flex", justifyContent: "flex-end", gap: 12 }}>
             <Button
               variant="secondary"
               label="Cancel"
-              onClick={() => {
-                setOpen(false);
-                form.resetFields();
-              }}
+              onClick={() => setOpenAdd(false)}
             />
-
-            <Button variant="primary" label="Create" onClick={handleCreateUser} />
+            <Button
+              variant="primary"
+              label="Create"
+              onClick={handleCreateUser}
+            />
           </div>
         </Form>
       </Modal>
@@ -163,11 +175,11 @@ export default function UsersAdmin() {
       <ConfirmModal
         open={deleteOpen}
         title="Delete User"
-        description={`Are you sure you want to delete user ${userToDelete?.email}?`}
+        description={`Are you sure you want to delete user "${userToDelete?.email}"?`}
         confirmText="Delete"
         cancelText="Cancel"
         onConfirm={confirmDelete}
-        onCancel={cancelDelete}
+        onCancel={() => setDeleteOpen(false)}
       />
     </div>
   );

@@ -4,12 +4,15 @@ import com.atlantbh.cinemaapp.config.JwtConfig;
 import com.atlantbh.cinemaapp.dto.projection.UserProjection;
 import com.atlantbh.cinemaapp.dto.request.AuthenticationRequestDto;
 import com.atlantbh.cinemaapp.dto.request.RegistrationRequestDto;
+import com.atlantbh.cinemaapp.dto.request.UserRequest;
 import com.atlantbh.cinemaapp.dto.response.AuthenticationResponseDto;
 import com.atlantbh.cinemaapp.dto.response.RegistrationResponseDto;
+import com.atlantbh.cinemaapp.dto.response.UserResponse;
 import com.atlantbh.cinemaapp.entity.RefreshToken;
 import com.atlantbh.cinemaapp.entity.ResetToken;
 import com.atlantbh.cinemaapp.entity.User;
 import com.atlantbh.cinemaapp.exception.ValidationErrorException;
+import com.atlantbh.cinemaapp.mapper.UserMapper;
 import com.atlantbh.cinemaapp.repository.RefreshTokenRepository;
 import com.atlantbh.cinemaapp.repository.ResetTokenRepository;
 import com.atlantbh.cinemaapp.repository.UserRepository;
@@ -24,6 +27,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.SecureRandom;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -49,6 +55,7 @@ public class UserService {
 
     private static final SecureRandom secureRandom = new SecureRandom();
     private static final Base64.Encoder base64Encoder = Base64.getUrlEncoder().withoutPadding();
+    private final UserMapper userMapper;
 
     public UserService(final UserRepository userRepository,
                        final RefreshTokenRepository refreshTokenRepository,
@@ -57,7 +64,8 @@ public class UserService {
                        final JwtConfig jwtConfig,
                        final AuthenticationManager authenticationManager,
                        final ResetTokenRepository resetTokenRepository,
-                       final MailService mailService) {
+                       final MailService mailService,
+                       final UserMapper userMapper) {
         this.userRepository = userRepository;
         this.refreshTokenRepository = refreshTokenRepository;
         this.passwordEncoder = passwordEncoder;
@@ -66,6 +74,7 @@ public class UserService {
         this.authenticationManager = authenticationManager;
         this.resetTokenRepository = resetTokenRepository;
         this.mailService = mailService;
+        this.userMapper = userMapper;
     }
 
     public UserProjection getProjectedUserByEmail(final String email) {
@@ -184,4 +193,29 @@ public class UserService {
     }
 
 
+    public Page<UserResponse> getAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable)
+                .map(userMapper::entityToDto);
+    }
+
+    public UserResponse createUser(UserRequest request) {
+
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new ValidationErrorException(
+                    Map.of("email", "Email already exists")
+            );
+        }
+
+        User user = userMapper.dtoToEntity(request);
+        return userMapper.entityToDto(userRepository.save(user));
+    }
+
+    public void deleteUser(UUID userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "User not found");
+        }
+
+        userRepository.deleteById(userId);
+    }
 }
