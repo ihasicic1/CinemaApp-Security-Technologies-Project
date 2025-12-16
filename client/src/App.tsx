@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { ConfigProvider } from "antd";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -63,6 +63,7 @@ const App = () => {
                 />
                 <Route path="/payment/:screeningId" element={<Payment />} />
                 <Route path="/reset-password" element={<div />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
               <Footer />
             </Router>

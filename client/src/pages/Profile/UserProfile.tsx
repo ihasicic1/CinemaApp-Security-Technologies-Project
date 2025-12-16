@@ -1,14 +1,23 @@
 import { useState, useEffect } from "react";
 import { Modal, Form, Input } from "antd";
 import { Button } from "../../components/Button";
+import { useCurrentUser, useLogin } from "../../hooks";
+import { useResetPasswordLoggedIn } from "../../hooks/useResetPasswordLoggedIn";
+
+
 
 import "./userProfile.scss";
+import { Navigate } from "react-router-dom";
 
 export default function UserProfile() {
-  const email = localStorage.getItem("email") || "user@example.com";
+  const { data: currentUser, isLoading } = useCurrentUser();
+  const isAuthenticated = !isLoading && !!currentUser;
 
   const [openPasswordModal, setOpenPasswordModal] = useState(false);
+  const [openSuccess, setOpenSuccess] = useState(false);
   const [form] = Form.useForm();
+  const loginMutation = useLogin();
+  const resetPasswordLoggedInMutation = useResetPasswordLoggedIn();
 
   // ⭐ Resetujemo form svaki put kada se modal OTVORI
   useEffect(() => {
@@ -16,6 +25,36 @@ export default function UserProfile() {
       form.resetFields();
     }
   }, [openPasswordModal]);
+
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
+  
+  if (!isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
+
+  const handleChangePassword = async (values: any) => {
+  try {
+        await loginMutation.mutateAsync({
+          email: currentUser.email,
+          password: values.oldPassword,
+        });
+        await resetPasswordLoggedInMutation.mutateAsync({
+          email: currentUser.email,
+          newPassword: values.newPassword,
+      });
+      setOpenPasswordModal(false)
+      setOpenSuccess(true)
+      }catch (error: unknown) {
+        form.setFields([
+          {
+            name: "oldPassword",
+            errors: ["Incorrect password"],
+          },
+        ]);
+      }
+  }
 
   return (
     <div className="profile-page">
@@ -27,13 +66,18 @@ export default function UserProfile() {
       <div className="profile-content">
         <div className="profile-card">
           <div className="profile-avatar">
-            <span>{email.charAt(0).toUpperCase()}</span>
+            <span>{currentUser.email.charAt(0).toUpperCase()}</span>
           </div>
 
           <div className="profile-info">
             <div className="profile-info-item">
               <label>Email</label>
-              <p>{email}</p>
+              {isLoading ? (
+                <div className="loading-user">Loading...</div>
+              ) : isAuthenticated ? (
+                <p>{currentUser.email}</p>
+              ) : (<div></div>)
+            }
             </div>
           </div>
 
@@ -55,7 +99,7 @@ export default function UserProfile() {
         footer={null}
         destroyOnClose
       >
-        <Form layout="vertical" form={form}>
+        <Form layout="vertical" form={form} onFinish={handleChangePassword}>
           <Form.Item
             label="Current Password"
             name="oldPassword"
@@ -102,17 +146,27 @@ export default function UserProfile() {
               onClick={() => setOpenPasswordModal(false)}
             />
 
-            <Button
-              variant="primary"
-              label="Save Changes"
-              onClick={() => {
-                form.validateFields().then(() => {
-                  setOpenPasswordModal(false);
-                });
-              }}
-            />
+            <Button type="submit" className="btn btn-primary" variant="primary" label="Save Changes">
+              Save Changes
+            </Button >
           </div>
         </Form>
+      </Modal>
+      <Modal
+        title={<div style={{ textAlign: "center", width: "100%" }}>Successfully changed</div>}
+        open={openSuccess}
+        onCancel={() => setOpenSuccess(false)}
+        footer={null}
+        destroyOnClose
+        centered
+      >
+        <div style={{ display: "flex", justifyContent: "center" }}>
+            <Button
+              variant="primary"
+              label="Cancel"
+              onClick={() => setOpenSuccess(false)}
+            />
+          </div>
       </Modal>
     </div>
   );

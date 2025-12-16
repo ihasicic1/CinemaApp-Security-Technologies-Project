@@ -15,7 +15,6 @@ import com.atlantbh.cinemaapp.repository.ResetTokenRepository;
 import com.atlantbh.cinemaapp.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -174,6 +173,18 @@ public class UserService {
         userRepository.save(user);
 
         resetTokenRepository.delete(tokenRecord);
+    }
+
+    @Transactional
+    public void resetPasswordLoggedIn(final String email, final String newPassword) {
+        final Optional<User> user = userRepository.findByEmail(email);
+        if(user.isPresent()) {
+            final User user2 = user.get();
+            user2.setPassword(passwordEncoder.encode(newPassword));
+            userRepository.save(user2);
+        }
+        else
+            throw new IllegalArgumentException("User not found");
     }
 
     private String makeResetToken() {

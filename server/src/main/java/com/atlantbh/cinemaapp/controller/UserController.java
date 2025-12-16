@@ -1,10 +1,7 @@
 package com.atlantbh.cinemaapp.controller;
 
 import com.atlantbh.cinemaapp.dto.projection.UserProjection;
-import com.atlantbh.cinemaapp.dto.request.AuthenticationRequestDto;
-import com.atlantbh.cinemaapp.dto.request.PasswordResetRequest;
-import com.atlantbh.cinemaapp.dto.request.RegistrationRequestDto;
-import com.atlantbh.cinemaapp.dto.request.ResetPasswordRequest;
+import com.atlantbh.cinemaapp.dto.request.*;
 import com.atlantbh.cinemaapp.dto.response.AuthenticationResponseDto;
 import com.atlantbh.cinemaapp.dto.response.RegistrationResponseDto;
 import com.atlantbh.cinemaapp.entity.ResetToken;
@@ -93,6 +90,16 @@ public class UserController {
     public ResponseEntity<String> resetPassword(@RequestBody final ResetPasswordRequest request) {
         try {
             userService.resetPassword(request.getToken(), request.getNewPassword());
+            return ResponseEntity.ok("Password updated");
+        } catch (final IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/auth/reset-password-logged-in/confirm")
+    public ResponseEntity<String> resetPasswordLoggedIn(@RequestBody final ResetLoggedInPassword request) {
+        try {
+            userService.resetPasswordLoggedIn(request.getEmail(), request.getNewPassword());
             return ResponseEntity.ok("Password updated");
         } catch (final IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
