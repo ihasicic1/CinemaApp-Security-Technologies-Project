@@ -1,27 +1,27 @@
 import { useMutation } from "@tanstack/react-query";
 import { axiosApp } from "../api/axiosApp";
 
-export type ResetPasswordLoggedInRequest = {
-  email: string;
+export type ChangePasswordRequest = {
+  oldPassword: string;
   newPassword: string;
 };
 
-export const useResetPasswordLoggedIn = (
+export const useChangePassword = (
   onSuccess?: () => void,
   onError?: (error: any) => void
 ) => {
-  const resetPasswordFn = async ({
-    email,
+  const changePasswordFn = async ({
+    oldPassword,
     newPassword,
-  }: ResetPasswordLoggedInRequest) => {
-    await axiosApp.post("/auth/reset-password-logged-in/confirm", {
-      email,
+  }: ChangePasswordRequest) => {
+    await axiosApp.post("/user/change-password", {
+      oldPassword,
       newPassword,
     });
   };
 
-  return useMutation<void, any, ResetPasswordLoggedInRequest>({
-    mutationFn: resetPasswordFn,
+  return useMutation<void, any, ChangePasswordRequest>({
+    mutationFn: changePasswordFn,
     onSuccess,
     onError,
   });

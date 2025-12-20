@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
 import { Modal, Form, Input } from "antd";
 import { Button } from "../../components/Button";
-import { useCurrentUser, useLogin } from "../../hooks";
-import { useResetPasswordLoggedIn } from "../../hooks/useResetPasswordLoggedIn";
-
-
+import { useCurrentUser } from "../../hooks";
+import { useChangePassword } from "../../hooks/useResetPasswordLoggedIn";
 
 import "./userProfile.scss";
 import { Navigate } from "react-router-dom";
@@ -16,10 +14,24 @@ export default function UserProfile() {
   const [openPasswordModal, setOpenPasswordModal] = useState(false);
   const [openSuccess, setOpenSuccess] = useState(false);
   const [form] = Form.useForm();
-  const loginMutation = useLogin();
-  const resetPasswordLoggedInMutation = useResetPasswordLoggedIn();
 
-  // ⭐ Resetujemo form svaki put kada se modal OTVORI
+  const changePasswordMutation = useChangePassword(
+    () => {
+      setOpenPasswordModal(false);
+      setOpenSuccess(true);
+      form.resetFields();
+    },
+    () => {
+      form.setFields([
+        {
+          name: "oldPassword",
+          errors: ["Current password is incorrect"],
+        },
+      ]);
+    }
+  );
+
+  // Reset form every time modal opens
   useEffect(() => {
     if (openPasswordModal) {
       form.resetFields();
@@ -29,32 +41,17 @@ export default function UserProfile() {
   if (isLoading) {
     return <p>Loading...</p>;
   }
-  
+
   if (!isAuthenticated) {
     return <Navigate to="/" replace />;
   }
 
-  const handleChangePassword = async (values: any) => {
-  try {
-        await loginMutation.mutateAsync({
-          email: currentUser.email,
-          password: values.oldPassword,
-        });
-        await resetPasswordLoggedInMutation.mutateAsync({
-          email: currentUser.email,
-          newPassword: values.newPassword,
-      });
-      setOpenPasswordModal(false)
-      setOpenSuccess(true)
-      }catch (error: unknown) {
-        form.setFields([
-          {
-            name: "oldPassword",
-            errors: ["Incorrect password"],
-          },
-        ]);
-      }
-  }
+  const handleChangePassword = (values: any) => {
+    changePasswordMutation.mutate({
+      oldPassword: values.oldPassword,
+      newPassword: values.newPassword,
+    });
+  };
 
   return (
     <div className="profile-page">
@@ -72,12 +69,7 @@ export default function UserProfile() {
           <div className="profile-info">
             <div className="profile-info-item">
               <label>Email</label>
-              {isLoading ? (
-                <div className="loading-user">Loading...</div>
-              ) : isAuthenticated ? (
-                <p>{currentUser.email}</p>
-              ) : (<div></div>)
-            }
+              <p>{currentUser.email}</p>
             </div>
           </div>
 
@@ -91,7 +83,7 @@ export default function UserProfile() {
         </div>
       </div>
 
-      {/* ⭐ PASSWORD MODAL */}
+      {/* Password Modal */}
       <Modal
         title="Change Password"
         open={openPasswordModal}
@@ -145,28 +137,31 @@ export default function UserProfile() {
               label="Cancel"
               onClick={() => setOpenPasswordModal(false)}
             />
-
-            <Button type="submit" className="btn btn-primary" variant="primary" label="Save Changes">
-              Save Changes
-            </Button >
+            <Button
+              type="submit"
+              variant="primary"
+              label="Save Changes"
+              loading={isLoading}
+            />
           </div>
         </Form>
       </Modal>
+
+      {/* Success Modal */}
       <Modal
-        title={<div style={{ textAlign: "center", width: "100%" }}>Successfully changed</div>}
+        title={<div style={{ textAlign: "center" }}>Successfully changed</div>}
         open={openSuccess}
         onCancel={() => setOpenSuccess(false)}
         footer={null}
-        destroyOnClose
         centered
       >
         <div style={{ display: "flex", justifyContent: "center" }}>
-            <Button
-              variant="primary"
-              label="Cancel"
-              onClick={() => setOpenSuccess(false)}
-            />
-          </div>
+          <Button
+            variant="primary"
+            label="OK"
+            onClick={() => setOpenSuccess(false)}
+          />
+        </div>
       </Modal>
     </div>
   );
