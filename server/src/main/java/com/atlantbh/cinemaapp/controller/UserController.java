@@ -96,13 +96,10 @@ public class UserController {
         }
     }
 
-    @PostMapping("/auth/reset-password-logged-in/confirm")
-    public ResponseEntity<String> resetPasswordLoggedIn(@RequestBody final ResetLoggedInPassword request) {
-        try {
-            userService.resetPasswordLoggedIn(request.getEmail(), request.getNewPassword());
-            return ResponseEntity.ok("Password updated");
-        } catch (final IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    @PostMapping("/user/change-password")
+    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request, Authentication authentication) {
+        String username = authentication.getName();
+        userService.changePassword(username, request);
+        return ResponseEntity.ok().build();
     }
 }
