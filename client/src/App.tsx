@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { ConfigProvider } from "antd";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -15,6 +15,8 @@ import {
 import UsersAdmin from "./pages/AdminPanel/UsersAdmin";
 import AdminLayout from "./pages/AdminPanel/AdminLayout";
 import { AuthProvider } from "./contexts";
+
+import UserProfile from "./pages/Profile/UserProfile";
 
 import "./App.scss";
 import MoviesAdmin from "./pages/AdminPanel/MoviesAdmin";
@@ -52,6 +54,7 @@ const App = () => {
                 <Route path="/" element={<Home />} />
                 <Route path="/about" element={<AboutUs />} />
                 <Route path="/pricing" element={<Pricing />} />
+                <Route path="/profile" element={<UserProfile />} />
                 <Route
                   path="/currently-showing"
                   element={<CurrentlyShowingMovies />}
@@ -71,6 +74,7 @@ const App = () => {
                 <Route path="movies" element={<MoviesAdmin />} />
                 <Route path="venues" element={<VenuesAdmin />} />
               </Route>
+                <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
               <Footer />
             </Router>

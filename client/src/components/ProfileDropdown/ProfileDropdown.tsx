@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useLogout } from "../../hooks";
 import { FaChevronDown } from "react-icons/fa6";
+import { useNavigate } from "react-router-dom";
 
 import "./profileDropdown.scss";
 
@@ -11,6 +12,7 @@ export type ProfileDropdownProps = {
 export const ProfileDropdown = ({ username }: ProfileDropdownProps) => {
   const [isDropdownOpen, setDropdownOpen] = useState<boolean>(false);
   const logoutMutation = useLogout();
+  const navigate = useNavigate();
 
   const toggleDropdown = () => {
     setDropdownOpen((prev) => !prev);
@@ -41,6 +43,16 @@ export const ProfileDropdown = ({ username }: ProfileDropdownProps) => {
 
       {isDropdownOpen && (
         <div className="profile-dropdown">
+          <button
+            className="profile-dropdown-item"
+            onClick={() => {
+              navigate("/profile");
+              setDropdownOpen(false);
+            }}
+          >
+            Profile
+          </button>
+
           <button
             className="profile-dropdown-item"
             onClick={handleLogout}
