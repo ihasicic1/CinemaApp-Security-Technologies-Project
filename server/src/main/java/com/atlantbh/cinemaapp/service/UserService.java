@@ -96,7 +96,7 @@ public class UserService {
 
         final User savedUser = userRepository.save(user);
 
-        final String accessToken = jwtService.generateAccessToken(savedUser.getEmail());
+        final String accessToken = jwtService.generateAccessToken(savedUser.getEmail() , user.getRole());
 
         final RefreshToken refreshToken = new RefreshToken(savedUser, Instant.now().plus(jwtConfig.getRefreshTokenTtl()));
         refreshTokenRepository.save(refreshToken);
@@ -113,11 +113,11 @@ public class UserService {
 
         final Duration refreshTokenTtl = jwtConfig.getRefreshTokenTtl();
 
-        final String accessToken = jwtService.generateAccessToken(request.email());
-
         final User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED,
                         "No user found with the provided email address"));
+
+        final String accessToken = jwtService.generateAccessToken(request.email(), user.getRole());
 
         final RefreshToken refreshToken = new RefreshToken();
         refreshToken.setUser(user);
@@ -134,7 +134,9 @@ public class UserService {
                 .orElseThrow(() -> new ResponseStatusException(
                         BAD_REQUEST, "Invalid or expired refresh token"));
 
-        final String newAccessToken = jwtService.generateAccessToken(refreshTokenEntity.getUser().getEmail());
+        final User user = refreshTokenEntity.getUser();
+
+        final String newAccessToken = jwtService.generateAccessToken(refreshTokenEntity.getUser().getEmail(), user.getRole());
 
         return new AuthenticationResponseDto(newAccessToken, refreshToken);
     }

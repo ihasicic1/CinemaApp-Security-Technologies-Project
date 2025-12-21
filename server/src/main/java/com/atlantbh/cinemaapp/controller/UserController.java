@@ -15,7 +15,10 @@ import com.atlantbh.cinemaapp.util.Pagination;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -103,7 +106,7 @@ public class UserController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-    
+
     @GetMapping("/users")
     public ResponseEntity<Page<UserResponse>> getAllUsers(
             @ModelAttribute Pagination pagination

@@ -11,6 +11,7 @@ import com.atlantbh.cinemaapp.util.Pagination;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -88,16 +89,19 @@ public class MovieController {
         return ResponseEntity.ok(screeningService.getScreeningsByMovieId(movieId));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<Page<Movie>> getAllMovies(@ModelAttribute final Pagination pagination) {
         return ResponseEntity.ok(movieService.getAllMovies(pagination.toPageable()));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<MovieResponse> createMovie(@RequestBody MovieRequest request) {
         return ResponseEntity.ok(movieService.createMovie(request));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{movieId}")
     public ResponseEntity<MovieResponse> updateMovie(
             @PathVariable UUID movieId,
@@ -106,6 +110,7 @@ public class MovieController {
         return ResponseEntity.ok(movieService.updateMovie(movieId, request));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{movieId}")
     public ResponseEntity<Void> deleteMovie(@PathVariable UUID movieId) {
         movieService.deleteMovie(movieId);

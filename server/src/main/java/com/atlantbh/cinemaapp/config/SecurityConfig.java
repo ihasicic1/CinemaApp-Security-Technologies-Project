@@ -5,18 +5,38 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
+@EnableMethodSecurity
 public class SecurityConfig {
+
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        JwtGrantedAuthoritiesConverter authoritiesConverter =
+                new JwtGrantedAuthoritiesConverter();
+
+        authoritiesConverter.setAuthorityPrefix("ROLE_");
+        authoritiesConverter.setAuthoritiesClaimName("role");
+
+        JwtAuthenticationConverter jwtAuthenticationConverter =
+                new JwtAuthenticationConverter();
+
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(authoritiesConverter);
+
+        return jwtAuthenticationConverter;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
@@ -32,16 +52,12 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(STATELESS))
                 .oauth2ResourceServer(server -> server
-                        .jwt(Customizer.withDefaults())
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
                         .bearerTokenResolver(request -> {
-                            final String requestURI = request.getRequestURI();
-
-                            if (requestURI.startsWith("/api/user/") || requestURI.startsWith("/api/payments/")) {
-                                final String authorization = request.getHeader("Authorization");
+                            final String authorization = request.getHeader("Authorization");
                                 if (authorization != null && authorization.startsWith("Bearer ")) {
                                     return authorization.substring(7);
                                 }
-                            }
                             return null;
                         })
                         .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
