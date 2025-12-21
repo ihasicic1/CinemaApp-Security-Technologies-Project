@@ -1,10 +1,7 @@
 package com.atlantbh.cinemaapp.controller;
 
 import com.atlantbh.cinemaapp.dto.projection.UserProjection;
-import com.atlantbh.cinemaapp.dto.request.AuthenticationRequestDto;
-import com.atlantbh.cinemaapp.dto.request.PasswordResetRequest;
-import com.atlantbh.cinemaapp.dto.request.RegistrationRequestDto;
-import com.atlantbh.cinemaapp.dto.request.ResetPasswordRequest;
+import com.atlantbh.cinemaapp.dto.request.*;
 import com.atlantbh.cinemaapp.dto.response.AuthenticationResponseDto;
 import com.atlantbh.cinemaapp.dto.response.RegistrationResponseDto;
 import com.atlantbh.cinemaapp.entity.ResetToken;
@@ -97,5 +94,12 @@ public class UserController {
         } catch (final IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @PostMapping("/user/change-password")
+    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request, Authentication authentication) {
+        String username = authentication.getName();
+        userService.changePassword(username, request);
+        return ResponseEntity.ok().build();
     }
 }

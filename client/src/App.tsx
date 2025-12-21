@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { ConfigProvider } from "antd";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -13,6 +13,8 @@ import {
   ResetPassword,
 } from "./pages";
 import { AuthProvider } from "./contexts";
+
+import UserProfile from "./pages/Profile/UserProfile";
 
 import "./App.scss";
 
@@ -48,6 +50,7 @@ const App = () => {
                 <Route path="/" element={<Home />} />
                 <Route path="/about" element={<AboutUs />} />
                 <Route path="/pricing" element={<Pricing />} />
+                <Route path="/profile" element={<UserProfile />} />
                 <Route
                   path="/currently-showing"
                   element={<CurrentlyShowingMovies />}
@@ -60,6 +63,7 @@ const App = () => {
                 />
                 <Route path="/payment/:screeningId" element={<Payment />} />
                 <Route path="/reset-password" element={<div />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
               <Footer />
             </Router>

@@ -3,6 +3,7 @@ package com.atlantbh.cinemaapp.service;
 import com.atlantbh.cinemaapp.config.JwtConfig;
 import com.atlantbh.cinemaapp.dto.projection.UserProjection;
 import com.atlantbh.cinemaapp.dto.request.AuthenticationRequestDto;
+import com.atlantbh.cinemaapp.dto.request.ChangePasswordRequest;
 import com.atlantbh.cinemaapp.dto.request.RegistrationRequestDto;
 import com.atlantbh.cinemaapp.dto.response.AuthenticationResponseDto;
 import com.atlantbh.cinemaapp.dto.response.RegistrationResponseDto;
@@ -174,6 +175,19 @@ public class UserService {
         userRepository.save(user);
 
         resetTokenRepository.delete(tokenRecord);
+    }
+
+    @Transactional
+    public void changePassword(String username, ChangePasswordRequest request) {
+        User user = userRepository.findByEmail(username)
+                .orElseThrow(() -> new IllegalArgumentException("Username not found: " + username));
+
+        if (!passwordEncoder.matches(request.oldPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("Old password is incorrect");
+        }
+
+        user.setPassword(passwordEncoder.encode(request.newPassword()));
+        userRepository.save(user);
     }
 
     private String makeResetToken() {
