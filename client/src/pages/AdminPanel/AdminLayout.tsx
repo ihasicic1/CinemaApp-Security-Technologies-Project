@@ -1,7 +1,17 @@
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import AdminSidebar from "../../components/AdminPanel/AdminSidebar";
+import { useCurrentUser } from "../../hooks";
 
 export default function AdminLayout() {
+  const { data: currentUser, isLoading } = useCurrentUser();
+  const isAdmin = !isLoading && !!currentUser && currentUser.role==="ADMIN";
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
+
+  if (!isAdmin) {
+    return <Navigate to="/" replace />;
+  }
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
       <AdminSidebar />
