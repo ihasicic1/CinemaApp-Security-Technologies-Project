@@ -162,3 +162,30 @@ export type SeatAvailability = {
   seatType: SeatType;
   taken: boolean;
 };
+
+export type PageResponse<T> = {
+  content: T[];
+  page: {
+    number: number;
+    size: number;
+    totalElements: number;
+    totalPages: number;
+  };
+};
+
+export type MovieListItem = {
+  id: string;
+  title: string;
+  duration: number;
+  pgRating: PGRating;
+  language: string;
+  director: string;
+  trailerUrl: string;
+};
+
+export type VenueRequest = {
+  name: string;
+  street: string;
+  imageUrl: string;
+  locationId: string;
+};

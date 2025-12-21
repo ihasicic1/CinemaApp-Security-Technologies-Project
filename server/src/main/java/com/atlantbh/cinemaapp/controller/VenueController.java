@@ -1,16 +1,17 @@
 package com.atlantbh.cinemaapp.controller;
 
+import com.atlantbh.cinemaapp.dto.request.VenueRequest;
+import com.atlantbh.cinemaapp.dto.response.VenueResponse;
 import com.atlantbh.cinemaapp.entity.Venue;
 import com.atlantbh.cinemaapp.service.VenueService;
 import com.atlantbh.cinemaapp.util.Pagination;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/venues")
@@ -27,5 +28,25 @@ public class VenueController {
     @GetMapping
     public ResponseEntity<Page<Venue>> getVenues(@ModelAttribute final Pagination pagination) {
         return ResponseEntity.ok(venueService.getVenues(pagination.toPageable()));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping
+    public ResponseEntity<VenueResponse> createVenue(@RequestBody VenueRequest request) {
+        return ResponseEntity.ok(venueService.createVenue(request));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{venueId}")
+    public ResponseEntity<VenueResponse> updateVenue(@PathVariable UUID venueId,
+                                                     @RequestBody VenueRequest request) {
+        return ResponseEntity.ok(venueService.updateVenue(venueId, request));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{venueId}")
+    public ResponseEntity<Void> deleteVenue(@PathVariable UUID venueId) {
+        venueService.deleteVenue(venueId);
+        return ResponseEntity.noContent().build();
     }
 }

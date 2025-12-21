@@ -1,5 +1,6 @@
 package com.atlantbh.cinemaapp.service;
 
+import com.atlantbh.cinemaapp.entity.SystemRole;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
@@ -24,10 +25,11 @@ public class JwtService {
         this.jwtEncoder = jwtEncoder;
     }
 
-    public String generateAccessToken(final String email) {
+    public String generateAccessToken(final String email, final SystemRole role) {
         final JwtClaimsSet claimsSet = JwtClaimsSet.builder()
                 .subject(email)
                 .issuer(issuer)
+                .claim("role", role.name())
                 .issuedAt(Instant.now())
                 .expiresAt(Instant.now().plus(accessTokenTtl))
                 .build();

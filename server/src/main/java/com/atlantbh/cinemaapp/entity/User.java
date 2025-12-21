@@ -10,6 +10,8 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -42,6 +44,10 @@ public class User {
     @UpdateTimestamp
     private LocalDate updatedAt;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private SystemRole role = SystemRole.USER;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RefreshToken> refreshToken;
 
@@ -64,6 +70,7 @@ public class User {
     public User(final String email, final String password) {
         this.email = email;
         this.password = password;
+        this.role = SystemRole.USER;
     }
 
     public UUID getId() {
@@ -105,6 +112,10 @@ public class User {
     public void setUpdatedAt(final LocalDate updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    public SystemRole getRole() { return role; }
+
+    public void setRole(final SystemRole role) { this.role = role; }
 
     public List<RefreshToken> getRefreshToken() {
         return refreshToken;

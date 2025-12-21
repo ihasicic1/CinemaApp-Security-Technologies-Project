@@ -6,17 +6,28 @@ import com.atlantbh.cinemaapp.dto.response.AuthenticationResponseDto;
 import com.atlantbh.cinemaapp.dto.response.RegistrationResponseDto;
 import com.atlantbh.cinemaapp.entity.ResetToken;
 import com.atlantbh.cinemaapp.entity.User;
+import com.atlantbh.cinemaapp.dto.request.UserRequest;
+import com.atlantbh.cinemaapp.dto.response.AuthenticationResponseDto;
+import com.atlantbh.cinemaapp.dto.response.RegistrationResponseDto;
+import com.atlantbh.cinemaapp.dto.response.UserResponse;
 import com.atlantbh.cinemaapp.service.UserService;
+import com.atlantbh.cinemaapp.util.Pagination;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 import java.util.Optional;
@@ -94,6 +105,28 @@ public class UserController {
         } catch (final IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<Page<UserResponse>> getAllUsers(
+            @ModelAttribute Pagination pagination
+    ) {
+        return ResponseEntity.ok(
+                userService.getAllUsers(pagination.toPageable())
+        );
+    }
+
+    @PostMapping("/users")
+    public ResponseEntity<UserResponse> createUser(
+            @RequestBody @Valid UserRequest request
+    ) {
+        return ResponseEntity.ok(userService.createUser(request));
+    }
+
+    @DeleteMapping("/users/{userId}")
+    public ResponseEntity<Void> deleteUser(@PathVariable UUID userId) {
+        userService.deleteUser(userId);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/user/change-password")

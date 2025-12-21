@@ -1,5 +1,5 @@
 import { axiosApp } from "./axiosApp";
-import type { Movie, MovieFiltersWithPageable } from "./types";
+import type { Movie, MovieFiltersWithPageable, MovieListItem, PageResponse } from "./types";
 import type { Pageable, ResponseType } from "../utils";
 
 export type MovieRating = {
@@ -55,4 +55,33 @@ export const getMovieRatings = async (
 ): Promise<MovieRating[]> => {
   const response = await axiosApp.get(`/movies/${movieId}/ratings`);
   return response.data;
+};
+
+export const getAdminMovies = async (
+  pageable: Pageable
+): Promise<PageResponse<MovieListItem>> => {
+  const response = await axiosApp.get("/movies", {
+    params: { ...pageable },
+  });
+
+  return response.data;
+};
+
+export const createMovie = async (
+  payload: Omit<MovieListItem, "id">
+): Promise<MovieListItem> => {
+  const response = await axiosApp.post("/movies", payload);
+  return response.data;
+};
+
+export const updateMovie = async (
+  id: string,
+  payload: Omit<MovieListItem, "id">
+): Promise<MovieListItem> => {
+  const response = await axiosApp.put(`/movies/${id}`, payload);
+  return response.data;
+};
+
+export const deleteMovie = async (id: string): Promise<void> => {
+  await axiosApp.delete(`/movies/${id}`);
 };

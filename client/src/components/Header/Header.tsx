@@ -13,6 +13,7 @@ export const Header = () => {
   const [authDrawerOpen, setAuthDrawerOpen] = useState<boolean>(false);
   const [resetToken, setResetToken] = useState<string | undefined>(undefined);
   const { data: currentUser, isLoading } = useCurrentUser();
+  const isAdmin = !isLoading && !!currentUser && currentUser.role==="ADMIN";
 
   const isAuthenticated = !isLoading && !!currentUser;
 
@@ -40,6 +41,19 @@ export const Header = () => {
         </NavLink>
 
         <ul className="header-list">
+          {isAdmin && (
+            <li>
+              <NavLink
+                to="/admin"
+                className={({ isActive }) =>
+                  `link${isActive ? " isActive" : ""}`
+                }
+              >
+                Admin Panel
+              </NavLink>
+            </li>
+          )}
+          
           <li>
             <NavLink
               to="/currently-showing"
