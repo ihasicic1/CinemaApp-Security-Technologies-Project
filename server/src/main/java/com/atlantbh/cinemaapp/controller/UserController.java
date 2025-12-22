@@ -50,7 +50,7 @@ public class UserController {
     }
 
     @PostMapping("/auth/register")
-    public ResponseEntity<RegistrationResponseDto> registerUser(@Valid @RequestBody final RegistrationRequestDto registrationDTO) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody final RegistrationRequestDto registrationDTO) {
 
         final RegistrationResponseDto response = userService.registerUser(registrationDTO);
 
@@ -100,6 +100,9 @@ public class UserController {
     @PostMapping("/auth/reset-password/confirm")
     public ResponseEntity<String> resetPassword(@RequestBody final ResetPasswordRequest request) {
         try {
+            if(request.getNewPassword().length() < 6) {
+                return ResponseEntity.badRequest().body("Password must be at least 6 characters");
+            }
             userService.resetPassword(request.getToken(), request.getNewPassword());
             return ResponseEntity.ok("Password updated");
         } catch (final IllegalArgumentException e) {
@@ -132,6 +135,9 @@ public class UserController {
     @PostMapping("/user/change-password")
     public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request, Authentication authentication) {
         String username = authentication.getName();
+        if(request.newPassword().length() < 6) {
+            return ResponseEntity.badRequest().body("Password must be at least 6 characters");
+        }
         userService.changePassword(username, request);
         return ResponseEntity.ok().build();
     }

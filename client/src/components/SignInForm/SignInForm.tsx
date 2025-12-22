@@ -37,7 +37,7 @@ export const SignInForm = ({
     const passwordError = validateFieldValue("password", password);
 
     if (emailError) newErrors.email = emailError;
-    if (passwordError) newErrors.password = passwordError;
+    if (passwordError && passwordError != "Password must be at least 6 characters") newErrors.password = passwordError;
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -49,7 +49,7 @@ export const SignInForm = ({
     const newErrors: AuthFormErrors = { ...errors };
     const error = validateFieldValue(field as ValidationField, value);
 
-    if (error) {
+    if (error && error != "Password must be at least 6 characters") {
       newErrors[field as keyof AuthFormErrors] = error;
     } else {
       delete newErrors[field as keyof AuthFormErrors];
