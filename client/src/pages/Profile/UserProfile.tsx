@@ -6,6 +6,7 @@ import { useChangePassword } from "../../hooks/useResetPasswordLoggedIn";
 
 import "./userProfile.scss";
 import { Navigate } from "react-router-dom";
+import { validateFieldValue } from "../../utils/authValidation";
 
 export default function UserProfile() {
   const { data: currentUser, isLoading } = useCurrentUser();
@@ -106,7 +107,12 @@ export default function UserProfile() {
             label="New Password"
             name="newPassword"
             rules={[
-              { required: true, message: "Please enter a new password" },
+              {
+                validator: (_, value) => {
+                  const error = validateFieldValue("password", value);
+                  return error ? Promise.reject(error) : Promise.resolve();
+                },
+              },
             ]}
           >
             <Input.Password />
